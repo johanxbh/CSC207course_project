@@ -27,3 +27,6 @@
       https://core.telegram.org/bots/api
    3. useless true facts 
       https://uselessfacts.jsph.pl/
+   4. random fun jokes
+      https://api.chucknorris.io/jokes/random
+   5. ![screenshot of using API](./image/using api.png)
