@@ -21,4 +21,9 @@
    4. the software will have "plazas", they will be a collection of each user's posts, and users themselves can narrow down 
       their posts by filtering the tags #.
 3. Link to the possible API
-   1. https://www.twilio.com/docs/messaging/services#send-a-message-with-a-messaging-service
+   1. twilio chat api
+      https://www.twilio.com/docs/messaging/services#send-a-message-with-a-messaging-service
+   2. telegram bots
+      https://core.telegram.org/bots/api
+   3. useless true facts 
+      https://uselessfacts.jsph.pl/
