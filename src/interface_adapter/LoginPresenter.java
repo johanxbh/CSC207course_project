@@ -1,4 +1,4 @@
-package InterfaceAdapter;
+package interface_adapter;
 
 public class LoginPresenter {
 }
