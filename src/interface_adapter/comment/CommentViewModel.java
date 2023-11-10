@@ -24,11 +24,11 @@ public class CommentViewModel extends ViewModel {
         support.addPropertyChangeListener(listener);
     }
 
-    public void setComment(String Comment) {
-        this.state.setComment(Comment);
+    public CommentState getState() {
+        return state;
     }
 
-    public String getComment() {
-        return this.state.getComment();
+    public void setState(CommentState state) {
+        this.state = state;
     }
 }
