@@ -1,5 +1,5 @@
 package use_case.comment;
 
 public interface CommentInputBoundary {
-    void execute();
+    void execute(CommentInputData commentInputData);
 }
