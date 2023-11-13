@@ -6,4 +6,5 @@ public interface postDAO {
     public ArrayList<postEntity>getMostRecentPost();
     public void savePost(postEntity post);
     public void cleanAllPost();
+    public postEntity getMostPopularPost();
 }
