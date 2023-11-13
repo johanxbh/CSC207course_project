@@ -9,7 +9,7 @@ import java.util.ArrayList;
     public postEntity(Object postInfo){
         this.postInfo = postInfo;
         postLiked = 0;
-        postComment = null;
+        postComment = new ArrayList<String>();
     }
     public void updatePostComment(String newComment){
             postComment.add(newComment);
