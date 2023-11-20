@@ -10,8 +10,8 @@ public class InMemoryDataAccessObject implements postDAO{
         posts = new ArrayList<postEntity>();
     }
     @Override
-    public ArrayList<postEntity> getMostRecentPost() {
-        return posts;
+    public postEntity getMostRecentPost() {
+        return posts.get(posts.size() -1 );
     }
 
     @Override
