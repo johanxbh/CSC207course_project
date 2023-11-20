@@ -1,9 +1,9 @@
 package use_case.login;
 
 public class LoginInteractor implements LoginInputBoundary {
-    final LoginDataAccessInterface userDataAccessObject;
+    final LoginUserDataAccessInterface userDataAccessObject;
 
-    public LoginInteractor(LoginDataAccessInterface userDataAccessInterface,
+    public LoginInteractor(LoginUserDataAccessInterface userDataAccessInterface,
                            LoginOutputBoundary loginOutputBoundary) {
         this.userDataAccessObject = userDataAccessInterface;
     }

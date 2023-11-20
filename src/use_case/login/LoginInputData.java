@@ -1,5 +1,6 @@
 package use_case.login;
 
+import entities.User;
 public class LoginInputData {
 
     final private int username;
