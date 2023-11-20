@@ -2,13 +2,13 @@ package use_case.login;
 
 public class LoginOutputData {
 
-    private final String username;
+    private final int username;
 
-    public LoginOutputData(String username) {
+    public LoginOutputData(int username) {
         this.username = username;
     }
 
-    public String getUsername() {
+    public int getUsername() {
         return username;
     }
 
