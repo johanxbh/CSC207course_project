@@ -11,4 +11,7 @@ public class ListLikedPostInputData {
         this.user = user;
         this.likedpost = user.getLikedPost();
     }
+    public ArrayList<Integer> getLikedPostList(){
+        return likedpost;
+    }
 }
