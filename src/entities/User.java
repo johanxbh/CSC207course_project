@@ -1,10 +1,12 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class User {
-    final String id;
-    HashMap<Integer, Integer> likedpost;
+    private final String id;
+    private HashMap<Integer, Integer> likedpost;
 
     public User(String id) {
         this.id = id;
@@ -16,6 +18,10 @@ public class User {
     public boolean checkedLikedPost(postEntity newPossiblePost){
         Integer postid = newPossiblePost.getId();
         return likedpost.containsKey(postid);
+    }
+    public ArrayList<Integer> getLikedPost(){
+        Collection<Integer> keys = likedpost.keySet();
+        return new ArrayList<Integer>(keys);
     }
 
 }
