@@ -35,4 +35,9 @@ public class InMemoryDataAccessObject implements postDAO{
         }
         return mostPopular;
     }
+
+    @Override
+    public postEntity getPost() {
+        return null;
+    }
 }
