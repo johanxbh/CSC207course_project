@@ -1,4 +1,4 @@
-package use_case.list_liked_post;
+package interface_adapter.list_liked_post;
 
 import entities.User;
 
