@@ -37,7 +37,7 @@ public class InMemoryDataAccessObject implements postDAO{
     }
 
     @Override
-    public postEntity getPost() {
+    public postEntity getPost(Integer id) {
         return null;
     }
 }

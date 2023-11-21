@@ -7,5 +7,5 @@ public interface postDAO {
     public void savePost(postEntity post);
     public void cleanAllPost();
     public postEntity getMostPopularPost();
-    public postEntity getPost();
+    public postEntity getPost(Integer postid);
 }
