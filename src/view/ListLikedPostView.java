@@ -29,18 +29,18 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         ArrayList<postEntity> likedPost = this.listLikedPostViewModel.getState().getListOfLikedPostArray();
         JPanel postsPanel = new JPanel();
-        for (postEntity post : likedPost){
+        for (postEntity post : likedPost) {
             JPanel onePost = this.createPostPanel(post);
             postsPanel.add(onePost);
         }
         JScrollPane postsScroll = new JScrollPane(postsPanel);
         this.add(postsScroll);
-        back  = new JButton(this.listLikedPostViewModel.BACK_LABEL);
+        back = new JButton(this.listLikedPostViewModel.BACK_LABEL);
         back.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(back)){
+                        if (evt.getSource().equals(back)) {
                             backController.execute();
                         }
                     }
@@ -58,8 +58,17 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
     public void propertyChange(PropertyChangeEvent evt) {
 
     }
-    private JPanel createPostPanel(postEntity post){
-        Object postInfo = post.getPostInfo();
 
+    private JPanel createPostPanel(postEntity post) {
+        JPanel postPanel = new JPanel();
+        postPanel.setLayout(new BorderLayout());
+        Object postInfo = post.getPostInfo();
+        JTextArea contentTextArea = new JTextArea(String.valueOf(postInfo));
+        contentTextArea.setWrapStyleWord(true);
+        contentTextArea.setLineWrap(true);
+        contentTextArea.setEditable(false);
+        JScrollPane contentScrollPane = new JScrollPane(contentTextArea);
+        postPanel.add(contentScrollPane, BorderLayout.CENTER);
+        return postPanel;
     }
 }
