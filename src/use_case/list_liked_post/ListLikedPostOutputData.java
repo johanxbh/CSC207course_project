@@ -9,4 +9,7 @@ public class ListLikedPostOutputData {
     public ListLikedPostOutputData(ArrayList<postEntity> listOfPost){
         this.listOfPost = listOfPost;
     }
+    public ArrayList<postEntity> getListOfPost(){
+        return this.listOfPost;
+    }
 }
