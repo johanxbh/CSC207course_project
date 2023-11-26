@@ -7,10 +7,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class ListLikedPostViewModel extends ViewModel {
-    public static final String BACK_LABEL = "Back to post Plaza";
+    public static final String BACK_LABEL = "Back to Post Plaza";
     private ListLikedPostState state = new ListLikedPostState();
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
-    public ListLikedPostViewModel(String viewName) {
+    public ListLikedPostViewModel() {
         super("liked post");
     }
 
