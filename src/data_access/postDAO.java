@@ -9,7 +9,5 @@ public interface postDAO {
     public void cleanAllPost();
     public postEntity getMostPopularPost();
     public postEntity getPost(Integer postid);
-    public postEntity getlatestPost(List<postEntity> posts);
-
-    postEntity getlatestPost();
+    public List<postEntity> getLatestPosts();
 }

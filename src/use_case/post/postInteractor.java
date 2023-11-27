@@ -3,7 +3,8 @@ package use_case.post;
 import entities.postEntity;
 import interface_adapter.postPresenter;
 import data_access.postDAO;
-import
+import java.util.ArrayList;
+import java.util.List;
 
 public class postInteractor implements postInputBoundary{
     private postOutputBoundary postPresenter;
