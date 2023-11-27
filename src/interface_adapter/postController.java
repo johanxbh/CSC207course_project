@@ -5,11 +5,9 @@ import use_case.post.postOutputBoundary;
 import data_access.postDAO;
 import use_case.post.PostinputData;
 public class postController {
-    private String textInformation;
     private postInputBoundary postInteractor;
-    public postController(String textInformation, postDAO dataAccessObj, postOutputBoundary postPresenter){
-        this.textInformation = textInformation;
-        postInteractor = new postInteractor(postPresenter, dataAccessObj);
+    public postController(postInputBoundary postInteractor){
+        this.postInteractor = postInteractor;
     }
     public void execute(String textInformation){
         postInteractor.execute(new PostinputData(textInformation));
