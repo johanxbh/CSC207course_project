@@ -3,6 +3,7 @@ package data_access;
 import entities.postEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryDataAccessObject implements postDAO{
     private ArrayList<postEntity> posts;
@@ -38,6 +39,12 @@ public class InMemoryDataAccessObject implements postDAO{
 
     @Override
     public postEntity getPost(Integer id) {
+        return null;
+    }
+
+    @Override
+    public postEntity getlatestPost(List<postEntity> posts) {
+        Object postEntity;
         return null;
     }
 }
