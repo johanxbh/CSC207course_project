@@ -1,0 +1,42 @@
+@startuml
+class LoginController{
++ LoginInputBoundary loginInteractor
++ LoginController()
++ void execute()
+}
+interface LoginInputBoundary{
++ void execute()
+}
+class LoginInteractor{
++ LoginOutputBoundary loginPresenter
++ LoginDataAccessObjectInterface loginDataAccessObject
++ void execute()
+}
+interface LoginDataAccessObjectInterface{
+void save()
+}
+interface LoginOutputBoundary{
++ void prepareSuccessView()
+}
+class LoginPresenter{
+void prepareSuccessView()
+}
+class UserFactory{
++ User createUser()
+}
+
+class User{
++ List<postEntities> LikeHistory
+}
+class LoginDataAccessObject{
++ void save()
+}
+UserFactory -down-> User : <<create>>
+LoginController --> LoginInputBoundary : <<use>>
+LoginInteractor --> LoginOutputBoundary : <<use>>
+LoginInteractor --> LoginDataAccessObjectInterface : <<use>>
+LoginInteractor --> UserFactory : <<use>>
+LoginDataAccessObject --|> LoginDataAccessObjectInterface : <<implements>>
+LoginInteractor --|> LoginInputBoundary : <<implements>>
+LoginPresenter --|> LoginOutputBoundary : <<implements>>
+@enduml
