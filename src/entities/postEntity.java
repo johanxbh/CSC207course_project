@@ -18,8 +18,8 @@ import java.util.ArrayList;
     public void updatePostComment(String newComment){
             postComment.add(newComment);
         }
-    public void updatedPostLiked(){
-            postLiked += 1;
+    public void setPostLiked(Integer integer){
+            postLiked = integer;
         }
     public Integer getPostLiked() {
             return postLiked;
