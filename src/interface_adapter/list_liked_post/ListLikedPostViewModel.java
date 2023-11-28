@@ -16,7 +16,7 @@ public class ListLikedPostViewModel extends ViewModel {
 
     @Override
     public void firePropertyChanged() {
-        support.firePropertyChange("state", null, this.state);
+        support.firePropertyChange("back", null, this.state);
     }
 
     @Override

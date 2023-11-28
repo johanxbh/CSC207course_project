@@ -5,8 +5,10 @@ import entities.postEntity;
 public class ListLikedPostState {
     private ArrayList<postEntity> listOfLikedPost = new ArrayList<postEntity>();
     private String postError = null;
+    private Boolean haveLikedPostState;
     public ListLikedPostState(ListLikedPostState listLikedPostState){
         this.listOfLikedPost = listLikedPostState.listOfLikedPost;
+        this.haveLikedPostState = false;
     }
     public ListLikedPostState(){}
     public ArrayList<postEntity> getListOfLikedPostArray(){
@@ -23,4 +25,9 @@ public class ListLikedPostState {
     public String getPostError(){
         return this.postError;
     }
+    public Boolean getHaveLikedPostState(){
+        return haveLikedPostState;
+    }
+    public void setHaveLikedPostState(Boolean state){haveLikedPostState = state;}
+
 }
