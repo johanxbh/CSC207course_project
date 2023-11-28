@@ -1,4 +1,6 @@
-package data_access;
+package interface_adapter;
+
+import data_access.postState;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

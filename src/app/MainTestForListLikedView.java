@@ -31,10 +31,15 @@ public class MainTestForListLikedView {
         ArrayList<postEntity> listOfpostEntites = new ArrayList<postEntity>();
         for (int i = 0; i <= 100; i++ ){
             postEntity onePost = new postEntity("this is a post for test" + String.valueOf(i));
+            onePost.updatePostComment("this is a test for comment" + String.valueOf(i));
             listOfpostEntites.add(onePost);
         }
         for (int i = 0; i <= 100; i++){
             postEntity onePost = new postEntity("this is a extra l" + "o".repeat(500)+ "ng post");
+            listOfpostEntites.add(onePost);
+        }
+        for (int i = 0; i <= 100; i++){
+            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(1000)+ "ng post");
             listOfpostEntites.add(onePost);
         }
         ListLikedPostState listLikedPostState = new ListLikedPostState();
