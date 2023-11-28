@@ -28,5 +28,8 @@ public class PostPlazaState {
     public void setPostPlazaError(String error){
         this.postPlazaError = error;
     }
+    public Map<Integer, postEntity> getPostMap(){
+        return this.postMap;
+    }
 
 }
