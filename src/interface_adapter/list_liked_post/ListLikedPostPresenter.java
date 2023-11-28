@@ -21,6 +21,7 @@ public class ListLikedPostPresenter implements ListLikedPostOutputBoundary {
             ListLikedPostState listLikedPostState = this.likedPostViewModel.getState();
             ArrayList<postEntity> listOfPost = listLikedPostOutputData.getListOfPost();
             listLikedPostState.setListOfLikedPostArray(listOfPost);
+            listLikedPostState.setHaveLikedPostState(true);
             this.likedPostViewModel.setState(listLikedPostState);
             this.likedPostViewModel.firePropertyChanged();
             this.viewManagerModel.setActiveView(likedPostViewModel.getViewName());
@@ -28,7 +29,10 @@ public class ListLikedPostPresenter implements ListLikedPostOutputBoundary {
     }
 
     @Override
-    public void prepareFailView() {
-
+    public void prepareFailView(String error) {
+        ListLikedPostState listLikedPostState = this.likedPostViewModel.getState();
+        listLikedPostState.setHaveLikedPostState(false);
+        listLikedPostState.setPostError(error);
+        likedPostViewModel.firePropertyChanged();
     }
 }

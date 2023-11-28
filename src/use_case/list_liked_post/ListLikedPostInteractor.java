@@ -11,7 +11,7 @@ public class ListLikedPostInteractor implements ListLikedPostInputBoundary{
     public void execute(ListLikedPostInputData inputData) {
         ArrayList<Integer> likedlist = inputData.getLikedPostList();
         if (likedlist.size() == 0){
-            listLikedPostPresenter.prepareFailView();
+            listLikedPostPresenter.prepareFailView("No liked post");
         }
         else{
         ArrayList<postEntity> likedPost = new ArrayList<postEntity>();
