@@ -1,4 +1,4 @@
-package data_access;
+package interface_adapter;
 
 public class postState {
     private String postText;
@@ -12,5 +12,8 @@ public class postState {
     }
     public void setPostText(String newPostText){
         this.postText = newPostText;
+    }
+
+    public void setUsername(int username) {
     }
 }

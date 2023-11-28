@@ -1,7 +1,5 @@
 package interface_adapter;
 
-import data_access.postState;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -11,6 +9,10 @@ public class postViewModel extends ViewModel{
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     public postViewModel() {
         super("post");
+    }
+
+    public static interface_adapter.postState getState() {
+        return null;
     }
 
     @Override

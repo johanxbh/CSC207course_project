@@ -3,6 +3,8 @@ package use_case.post;
 import entities.postEntity;
 import interface_adapter.postPresenter;
 import data_access.postDAO;
+import java.util.ArrayList;
+import java.util.List;
 
 public class postInteractor implements postInputBoundary{
     private postOutputBoundary postPresenter;
@@ -21,5 +23,11 @@ public class postInteractor implements postInputBoundary{
             dataAccessObj.savePost(newPosts);
             postPresenter.prepareSuccessView(new postOutputData("successfully posted",newPosts));
         }
+    }
+
+    public void refreshPosts() {
+        List<postEntity> latestPosts = dataAccessObj.getLatestPosts();
+        // Here you can format or process the posts as needed before sending to the presenter
+        postPresenter.prepareRefreshView(latestPosts);
     }
 }
