@@ -43,6 +43,11 @@ public class InMemoryDataAccessObject implements postDAO{
     }
 
     @Override
+    public List<postEntity> getLatestPosts() {
+        return null;
+    }
+
+    @Override
     public postEntity getlatestPost(List<postEntity> posts) {
         Object postEntity;
         return null;
