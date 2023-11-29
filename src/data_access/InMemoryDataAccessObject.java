@@ -7,7 +7,7 @@ import java.util.List;
 
 public class InMemoryDataAccessObject implements postDAO{
     private ArrayList<postEntity> posts;
-    private InMemoryDataAccessObject(){
+    public InMemoryDataAccessObject(){
         posts = new ArrayList<postEntity>();
     }
     @Override

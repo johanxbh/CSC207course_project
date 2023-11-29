@@ -9,4 +9,7 @@ public class postOutputData {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
 }
