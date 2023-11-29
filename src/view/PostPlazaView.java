@@ -19,12 +19,14 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
     private final PostPlazaViewModel postPlazaViewModel;
     private final BackController backController;
     private final CommentController commentController;
+    private final postView postView;
     private Dimension size;
 
-    public PostPlazaView(PostPlazaViewModel postPlazaViewModel, BackController backController, CommentController commentController) {
+    public PostPlazaView(PostPlazaViewModel postPlazaViewModel, BackController backController, CommentController commentController, view.postView postView) {
         this.postPlazaViewModel = postPlazaViewModel;
         this.backController = backController;
         this.commentController = commentController;
+        this.postView = postView;
         this.postPlazaViewModel.addPropertyChangeListener(this);
         JLabel title = new JLabel("Post Plaza");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -39,7 +41,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
             JPanel oneCommentPlaza = this.createPostCommentPanel(post);
             postsPanel.add(oneCommentPlaza);
             postsPanel.add(createButtonsForPost(new Dimension(500, 30)));
-            postsPanel.add(Box.createVerticalStrut(40));
+            postsPanel.add(Box.createVerticalStrut(80));
         }
         JScrollPane postsScroll = new JScrollPane(postsPanel);
         postsScroll.getViewport().setPreferredSize(new Dimension(500, 500));
@@ -81,6 +83,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         contentTextArea.setWrapStyleWord(true);
         contentTextArea.setLineWrap(true);
         contentTextArea.setEditable(false);
+        contentTextArea.setFont(new Font(contentTextArea.getFont().getFontName(), contentTextArea.getFont().getStyle(), contentTextArea.getFont().getSize() + 5));
         JScrollPane contentScrollPane = new JScrollPane(contentTextArea);
         postPanel.add(contentScrollPane);
         return postPanel;
@@ -180,7 +183,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                     public void actionPerformed(ActionEvent evt) {
                         if(evt.getSource().equals(newpost)){
                             // TODO: implement back usecase and come back to this
-                            backController.execute();
+                            this.showDialog(newpost);
                         }
                     }
                 }
@@ -201,5 +204,11 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         buttonPanel.add(Box.createVerticalStrut(50));
         buttonPanel.add(checklikedpost);
         return buttonPanel;
+    }
+    private void showDialog(JButton button){
+        JFrame newFrame = new JFrame();
+        newFrame.add(postView);
+
+
     }
 }
