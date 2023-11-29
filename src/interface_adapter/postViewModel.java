@@ -12,10 +12,6 @@ public class postViewModel extends ViewModel {
         super("post");
     }
 
-    public static interface_adapter.postState getState() {
-        return null;
-    }
-
     @Override
     public void firePropertyChanged() {
         support.firePropertyChange("post", null, this.postState);
