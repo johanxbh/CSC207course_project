@@ -2,46 +2,31 @@ package interface_adapter.like;
 
 public class LikeState {
 
-    private Boolean Like;
-    private Integer LikeCount;
+    private Boolean like;
+    private Integer likeCount;
 
 
-    public LikeState(Boolean Like) {
-        this.Like = Like;
+    public LikeState(Boolean like) {
+        this.like = like;
     }
 
     public LikeState() {
     }
 
     public Boolean getLike() {
-        return Like;
+        return like;
     }
 
-    public void setLike(Boolean Like) {
-        this.Like = Like;
+    public void setLike(Boolean like) {
+        this.like = like;
     }
 
     public Integer getLikeCount() {
-        return LikeCount;
+        return likeCount;
     }
 
-    public void setLikeCount(Integer LikeCount) {
-        this.LikeCount = LikeCount;
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
     }
 
-    public void updateLikeCount() {
-        LikeCount += 1;
-    }
-
-    public void updateLikeState() {
-        Like = !Like;
-    }
-
-    public void updateLikeState(Boolean Like) {
-        this.Like = Like;
-    }
-
-    public void updateLikeCount(Integer LikeCount) {
-        this.LikeCount = LikeCount;
-    }
 }

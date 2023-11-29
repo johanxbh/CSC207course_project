@@ -1,6 +1,9 @@
 package interface_adapter;
+import entities.postEntity;
 import use_case.post.postOutputBoundary;
 import use_case.post.postOutputData;
+
+import java.util.List;
 
 public class postPresenter implements postOutputBoundary{
     private postViewModel postViewModel;
@@ -24,5 +27,10 @@ public class postPresenter implements postOutputBoundary{
         postViewModel.getState().setPostError("please post something");
         postViewModel.getState().setPostSuccess("false");
         postViewModel.firePropertyChanged();
+    }
+
+    @Override
+    public void prepareRefreshView(List<postEntity> latestPosts) {
+
     }
 }
