@@ -71,7 +71,7 @@ public class MainTestForPostPlaza {
 
         CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(new CommentViewModel("comment"));
         CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());
-        PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor));
+        PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);
 
 
 
