@@ -13,13 +13,13 @@ public class postInteractor implements postInputBoundary{
     }
     @Override
     public void execute(PostinputData data) {
-        if (data.getPostText() == ""){
+        if (data.getPostText() == null){
             postPresenter.prepareFailView();
         }
         else{
             postEntity newPosts = new postEntity(data.getPostText());
             dataAccessObj.savePost(newPosts);
-            postPresenter.prepareSuccessView(new postOutputData("successfully posted",newPosts));
+            postPresenter.prepareSuccessView(new postOutputData(data.getPostText(), newPosts));
         }
     }
 }
