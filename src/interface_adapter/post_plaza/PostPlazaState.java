@@ -9,6 +9,7 @@ public class PostPlazaState {
     private Map<Integer, postEntity> postMap = new HashMap<Integer, postEntity>();
     private String postPlazaError = null;
     private Boolean havePost = false;
+    private String CLOSE_ERROR = "close";
 
     public PostPlazaState(PostPlazaState postPlazaState){
         this.postMap = postPlazaState.postMap;

@@ -1,6 +1,8 @@
 package app;
 
 import data_access.FilePostAccessObject;
+import data_access.InMemoryDataAccessObject;
+import data_access.postDAO;
 import entities.postEntity;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.back.BackController;
@@ -8,6 +10,7 @@ import interface_adapter.comment.CommentController;
 import interface_adapter.comment.CommentPresenter;
 import interface_adapter.comment.CommentViewModel;
 import interface_adapter.list_liked_post.ListLikedPostController;
+import interface_adapter.postViewModel;
 import interface_adapter.post_plaza.PostPlazaState;
 import interface_adapter.post_plaza.PostPlazaViewModel;
 import use_case.comment.CommentInputBoundary;
@@ -17,6 +20,7 @@ import use_case.list_liked_post.ListLikedPostInputBoundary;
 import use_case.list_liked_post.ListLikedPostInteractor;
 import view.PostPlazaView;
 import view.ViewManager;
+import view.postView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,6 +75,11 @@ public class MainTestForPostPlaza {
 
         CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(new CommentViewModel("comment"));
         CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());
+        postViewModel postViewModel = new postViewModel();
+        postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();
+
+
+        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel);
         PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);
 
 

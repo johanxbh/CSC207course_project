@@ -3,12 +3,15 @@ package view;
 import entities.postEntity;
 import interface_adapter.back.BackController;
 import interface_adapter.comment.CommentController;
+import interface_adapter.postState;
 import interface_adapter.post_plaza.PostPlazaViewModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -20,7 +23,11 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
     private final BackController backController;
     private final CommentController commentController;
     private final postView postView;
+
     private Dimension size;
+    private JFrame openedJFrame;
+    private boolean haveOpenedJFrame;
+
 
     public PostPlazaView(PostPlazaViewModel postPlazaViewModel, BackController backController, CommentController commentController, view.postView postView) {
         this.postPlazaViewModel = postPlazaViewModel;
@@ -32,7 +39,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.add(title);
         Map<Integer, postEntity> postPoolMap = this.postPlazaViewModel.getState().getPostMap();
-        ArrayList<postEntity> postPoolList = new ArrayList<postEntity>( postPoolMap.values());
+        ArrayList<postEntity> postPoolList = new ArrayList<postEntity>(postPoolMap.values());
         JPanel postsPanel = new JPanel();
         postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
         for (postEntity post : postPoolList) {
@@ -58,13 +65,15 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-
+        if (evt.getNewValue() instanceof postState){
+            openedJFrame.dispose();
+        }
     }
 
     private JPanel createPostPanel(postEntity post) {
         String content = (String) post.getPostInfo();
         int postPanelHeight;
-        if (content.length() > 200){
+        if (content.length() > 200) {
             postPanelHeight = 200;
         } else {
             postPanelHeight = content.length() * 2;
@@ -90,40 +99,41 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
     }
 
 
-    private JPanel createPostCommentPanel(postEntity post){
+    private JPanel createPostCommentPanel(postEntity post) {
         JTextArea contentTextArea = new JTextArea("-".repeat(50) + "below are the comment\n");
         ArrayList<String> commentList = post.getPostComment();
         int totalWords = 0;
-        for (String i: commentList){
+        for (String i : commentList) {
             totalWords += i.length();
         }
         JPanel commentPanel = new JPanel();
         commentPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         int panelWidth = 500;
         int panelHeight;
-        if (totalWords > 100 ){
+        if (totalWords > 100) {
             panelHeight = 200;
-        }else {
+        } else {
             panelHeight = totalWords * 3;
         }
         commentPanel.setLayout(new BoxLayout(commentPanel, BoxLayout.Y_AXIS));
         commentPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
         commentPanel.setMinimumSize(new Dimension(panelWidth, panelHeight));
         commentPanel.setMaximumSize(new Dimension(panelWidth, panelHeight));
-        for (String i: commentList){
+        for (String i : commentList) {
             contentTextArea.append(i + "\n" + "-".repeat(50));
         }
         contentTextArea.setWrapStyleWord(true);
         contentTextArea.setLineWrap(true);
         contentTextArea.setEditable(false);
         JScrollPane scrollComment = new JScrollPane(contentTextArea);
-        scrollComment.setPreferredSize(new Dimension(panelWidth, panelHeight ));
-        scrollComment.setMaximumSize(new Dimension(new Dimension(panelWidth, panelHeight )));
+        scrollComment.setPreferredSize(new Dimension(panelWidth, panelHeight));
+        scrollComment.setMaximumSize(new Dimension(new Dimension(panelWidth, panelHeight)));
         scrollComment.setMinimumSize(new Dimension(panelWidth, panelHeight));
         commentPanel.add(scrollComment);
         return commentPanel;
     }
-    private JPanel createButtonsForPost(Dimension dimension){
+
+    private JPanel createButtonsForPost(Dimension dimension) {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
         buttonPanel.setLayout(new FlowLayout());
@@ -135,7 +145,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(comment)){
+                        if (evt.getSource().equals(comment)) {
                             // TODO: implement back usecase and come back to this
                             backController.execute();
                         }
@@ -148,7 +158,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        if(evt.getSource().equals(like)){
+                        if (evt.getSource().equals(like)) {
                             // TODO: implement back usecase and come back to this
                             backController.execute();
                         }
@@ -158,7 +168,8 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         buttonPanel.add(like);
         return buttonPanel;
     }
-    public JPanel createButtonsForPlaza(Dimension dimension){
+
+    public JPanel createButtonsForPlaza(Dimension dimension) {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setPreferredSize(dimension);
         buttonPanel.setMaximumSize(dimension);
@@ -170,7 +181,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        if(evt.getSource().equals(refresh)){
+                        if (evt.getSource().equals(refresh)) {
                             // TODO: implement back usecase and come back to this
                             backController.execute();
                         }
@@ -181,18 +192,21 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        if(evt.getSource().equals(newpost)){
+                        if (evt.getSource().equals(newpost)) {
                             // TODO: implement back usecase and come back to this
-                            this.showDialog(newpost);
+                            if (!haveOpenedJFrame) {
+                                showDialog(newpost);
+                            }
                         }
                     }
                 }
+
         );
         checklikedpost.addActionListener(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
-                        if(evt.getSource().equals(checklikedpost)){
+                        if (evt.getSource().equals(checklikedpost)) {
                             // TODO: implement back usecase and come back to this
                             backController.execute();
                         }
@@ -205,10 +219,26 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         buttonPanel.add(checklikedpost);
         return buttonPanel;
     }
-    private void showDialog(JButton button){
+
+    private void showDialog(JButton button) {
+        String buttonName = button.getName();
         JFrame newFrame = new JFrame();
+        newFrame.setLocationRelativeTo(null);
+        newFrame.setSize(new Dimension(800, 600));
         newFrame.add(postView);
-
-
+        openedJFrame = newFrame;
+        haveOpenedJFrame = true;
+        newFrame.setVisible(true);
+        newFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.out.println("New Frame is closing...");
+                haveOpenedJFrame = false; // Reset the frame reference when it's closed
+            }
+        });
+    }
+    public void closeWindows(){
+        openedJFrame.dispose();
+        haveOpenedJFrame = false;
     }
 }

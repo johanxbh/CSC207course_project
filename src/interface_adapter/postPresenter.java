@@ -1,4 +1,5 @@
 package interface_adapter;
+
 import entities.postEntity;
 import use_case.post.postOutputBoundary;
 import use_case.post.postOutputData;
