@@ -1,2 +1,5 @@
-package use_case.cancel;public interface cancelOutputBoundary {
+package use_case.cancel;
+
+public interface cancelOutputBoundary {
+    void execute();
 }
