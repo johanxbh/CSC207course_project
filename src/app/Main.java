@@ -2,13 +2,11 @@ package app;
 
 import data_access.InMemoryDataAccessObject;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.postController;
+import interface_adapter.cancel.cancelViewModel;
 import interface_adapter.postViewModel;
 import view.ViewManager;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import view.postView;
 import data_access.postDAO;
@@ -22,8 +20,9 @@ public class Main {
         ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
         postViewModel postViewModel = new postViewModel();
+        cancelViewModel cancelViewModel = new cancelViewModel();
         postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();
-        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel);
+        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel, cancelViewModel);
         views.add(postView, postView.viewName);
         viewManagerModel.setActiveView(postView.viewName);
         viewManagerModel.firePropertyChanged();
