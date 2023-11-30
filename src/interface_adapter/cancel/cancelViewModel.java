@@ -1,9 +1,11 @@
-package interface_adapter;
+package interface_adapter.cancel;
+
+import interface_adapter.ViewModel;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class cancelViewModel extends ViewModel{
+public class cancelViewModel extends ViewModel {
     public static final String CANCEL_BUTTON_LABEL = "cancel";
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     public cancelViewModel(){
