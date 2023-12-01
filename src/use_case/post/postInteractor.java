@@ -1,9 +1,8 @@
 package use_case.post;
 
 import entities.postEntity;
-import interface_adapter.postPresenter;
 import data_access.postDAO;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class postInteractor implements postInputBoundary{
@@ -15,13 +14,15 @@ public class postInteractor implements postInputBoundary{
     }
     @Override
     public void execute(PostinputData data) {
-        if (data.getPostText() == null){
+        if (data.getPostText() == null && data.getPostPicture() == null){
             postPresenter.prepareFailView();
         }
         else{
-            postEntity newPosts = new postEntity(data.getPostText());
+
+            System.out.println("from input data" + data.getPostPicture());
+            postEntity newPosts = new postEntity(data.getPostText(), data.getPostPicture());
             dataAccessObj.savePost(newPosts);
-            postPresenter.prepareSuccessView(new postOutputData(data.getPostText(), newPosts));
+            postPresenter.prepareSuccessView(new postOutputData(newPosts));
         }
     }
 
