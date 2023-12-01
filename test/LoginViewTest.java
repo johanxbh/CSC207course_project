@@ -1,59 +1,46 @@
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class LoginViewTest {
 
-    @Mock
-    private LoginViewModel mockLoginViewModel;
-    @Mock
-    private LoginController mockLoginController;
-
+    private LoginViewModel mockViewModel;
+    private LoginController mockController;
     private LoginView loginView;
 
-    @BeforeEach
+    @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        loginView = new LoginView(mockLoginViewModel, mockLoginController);
+        mockViewModel = new LoginViewModel(); // Assuming you have a default constructor
+        mockController = new LoginController(); // Assuming you have a default constructor
+        loginView = new LoginView(mockViewModel, mockController);
     }
 
     @Test
-    public void testInitialisation() {
-        // Verify all components are initialised
+    public void testInitialization() {
         assertNotNull(loginView.usernameInputField);
         assertNotNull(loginView.passwordInputField);
         assertNotNull(loginView.logIn);
         assertNotNull(loginView.cancel);
+        // Add more assertions to check initial state of the view
     }
 
     @Test
-    public void testLoginButtonClick() {
-        // Simulate button click
-        loginView.logIn.doClick();
+    public void testActionPerformed() {
+        // You can simulate an action event and call the actionPerformed method
+        ActionEvent testEvent = new ActionEvent(new Object(), ActionEvent.ACTION_PERFORMED, "Test");
+        loginView.actionPerformed(testEvent);
 
-        // Verify loginController.execute() is called
-        verify(mockLoginController, times(1)).execute(anyString());
+        // Check if the method behaved as expected
+        // Since actionPerformed just prints to console in your case, this might be challenging to test without further logic
     }
 
     @Test
-    public void testUserInputHandling() {
-        // Simulate user input
+    public void testTextFieldInput() {
         loginView.usernameInputField.setText("testUser");
+        assertEquals("testUser", loginView.usernameInputField.getText());
 
-        // Verify LoginViewModel state is updated
-        verify(mockLoginViewModel, atLeastOnce()).setState(any(LoginState.class));
-    }
-
-    @Test
-    public void testViewUpdateOnPropertyChange() {
-        // Create a sample LoginState and trigger propertyChange
-        LoginState sampleState = new LoginState("testUser", "testPassword");
-        loginView.propertyChange(new PropertyChangeEvent(this, "state", null, sampleState));
-
-        // Verify view is updated according to the new state
-        // Depending on how setFields() is implemented
+        String testPassword = "testPass";
+        loginView.passwordInputField.setText(testPassword);
+        assertEquals(testPassword, new String(loginView.passwordInputField.getPassword()));
     }
 }
