@@ -1,11 +1,13 @@
 package data_access;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import entities.postEntity;
 import okhttp3.*;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class postDataAccessObject implements postDAO {
@@ -14,6 +16,8 @@ public class postDataAccessObject implements postDAO {
     private String LATEST_POST_NUM = "/LATEST_NUM.txt";
     private String APPENDING_FILE = "/APPENDING_FILE.txt";
     private String POST_DIRECTORY = "/POST";
+    private String DOWNLOAD_DIRECTORY_NAME = "/Download";
+    private String UPLOAD_DIRECTORY_NAME = "/Upload";
 
     public postDataAccessObject(String api) throws IOException {
         File outputDirectory = new File(OUT_PUT_DIRECTORY_NAME);
@@ -38,12 +42,49 @@ public class postDataAccessObject implements postDAO {
         downloadFile(LATEST_POST_NUM, LATEST_POST_NUM);
         String newestNum = readContent(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
         downloadFile(newestNum, OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
-
+        String latest = readContent(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
+        downloadFile(latest + ".json", OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + "/" + latest + ".json");
+        return createPostEntityFromJson(OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + "/" + latest + ".json");
     }
 
     @Override
-    public void savePost(postEntity post) {
+    public void savePost(postEntity post) throws IOException {
+        String appendingFilePath = OUT_PUT_DIRECTORY_NAME + "/" + APPENDING_FILE;
+        downloadFile(APPENDING_FILE,appendingFilePath);
+        String content = readContent(appendingFilePath);
+        while (content == "true"){
+            try {
+                Thread.sleep(1000); // 1000 milliseconds = 1 second
+            } catch (InterruptedException e) {
+                // Handle any potential interruptions
+                e.printStackTrace();
+            }
+            deleteFile(appendingFilePath);
+            downloadFile(APPENDING_FILE,appendingFilePath);
+            content = readContent(appendingFilePath);
+        }
+        deleteFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE);
+        createTXT(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, "true");
+        uploadFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, POST_DIRECTORY+APPENDING_FILE);
 
+        deleteFile(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
+        downloadFile(POST_DIRECTORY + LATEST_POST_NUM, OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
+        Integer newPostID = Integer.parseInt(readContent(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM))+ 1;
+        post.setPostID(newPostID);
+        String picturePath = post.getPostPicture();
+        if (checkLocalFileExist(picturePath)){
+            String type = checkPictureType(picturePath);
+            uploadFile(picturePath, POST_DIRECTORY + "/" + post.getId() +"." +type);
+        }
+        String postpath = convertToJson(post);
+        uploadFile(postpath,POST_DIRECTORY + "/" + post.getId() + ".json");
+        deleteFile(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
+        String newID = newPostID.toString();
+        createTXT(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM, newID);
+        uploadFile(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM,LATEST_POST_NUM);
+        deleteFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE);
+        createTXT(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, "false");
+        uploadFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, POST_DIRECTORY+APPENDING_FILE);
     }
 
     @Override
@@ -58,7 +99,13 @@ public class postDataAccessObject implements postDAO {
 
     @Override
     public postEntity getPost(Integer postid) {
-        return null;
+        String remoteDirectory = POST_DIRECTORY + "/" + postid.toString() + ".json";
+        downloadFile(remoteDirectory, OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + postid.toString() + ".json");
+        postEntity newPostEntity = createPostEntityFromJson(DOWNLOAD_DIRECTORY_NAME + postid.toString() + ".json");
+        String remotePicturePath = POST_DIRECTORY + "/" + postid + "." + checkPictureType(newPostEntity.getPostPicture());
+        downloadFile(remotePicturePath, OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + postid + "." + checkPictureType(newPostEntity.getPostPicture()));
+        newPostEntity.setPothPicture(OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + postid + "." + checkPictureType(newPostEntity.getPostPicture()));
+        return newPostEntity;
     }
 
     @Override
@@ -229,8 +276,67 @@ public class postDataAccessObject implements postDAO {
         }
         return all;
     }
-    private postEntity createPostEntity(String postEntityText){
-        String[] listOfProperty = postEntityText.split("\n");
-        listOfProperty
+
+    private postEntity createPostEntityFromJson(String filepath) {
+        postEntity post;
+        try (FileReader reader = new FileReader(filepath)) {
+            // Convert JSON to postEntity object
+            Gson gson = new Gson();
+            post = gson.fromJson(reader, postEntity.class);
+            return post;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
+
+    private String convertToJson(postEntity post) {
+        Integer postId = post.getId();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(post);
+
+        // Save JSON to a file
+        String filePath = OUT_PUT_DIRECTORY_NAME + UPLOAD_DIRECTORY_NAME + "/" + postId + ".json"; // Replace with your desired file path
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(json);
+            return OUT_PUT_DIRECTORY_NAME + UPLOAD_DIRECTORY_NAME + postId + ".json";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    private void deleteFile(String filePath){
+        File file = new File(filePath);
+        if (file.exists()){
+            file.delete();
+        }
+    }
+    private boolean checkLocalFileExist(String filePath){
+        File file = new File(filePath);
+        if (file.exists()){
+            return true;
+        }
+        return false;
+    }
+    private String checkPictureType(String picturepath){
+        String input = "This is a string with .ABC and .DEFGH, and .IJKL";
+
+        Pattern pattern = Pattern.compile("\\.([A-Za-z]+)"); // Pattern for dot followed by letters
+        Matcher matcher = pattern.matcher(input);
+
+        String lastXXX = ""; // Variable to store the last XXX text found
+
+        while (matcher.find()) {
+            String match = matcher.group(1);
+            lastXXX = match;
+        }
+
+        if (!lastXXX.isEmpty()) {
+            return null;
+        } else {
+            return lastXXX;
+        }
+    }
+
 }
