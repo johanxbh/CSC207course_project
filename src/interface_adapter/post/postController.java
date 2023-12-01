@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.post;
 import use_case.post.postInputBoundary;
 import use_case.post.postInteractor;
 import use_case.post.postOutputBoundary;
@@ -9,7 +9,8 @@ public class postController {
     public postController(postInputBoundary postInteractor){
         this.postInteractor = postInteractor;
     }
-    public void execute(String textInformation){
-        postInteractor.execute(new PostinputData(textInformation));
+    public void execute(String textInformation, String postPictre){
+        System.out.println("from input data" + postPictre);
+        postInteractor.execute(new PostinputData(textInformation, postPictre));
     }
 }

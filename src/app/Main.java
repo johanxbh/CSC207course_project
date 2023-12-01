@@ -3,7 +3,7 @@ package app;
 import data_access.InMemoryDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.cancel.cancelViewModel;
-import interface_adapter.postViewModel;
+import interface_adapter.post.postViewModel;
 import view.ViewManager;
 import javax.swing.*;
 import java.awt.*;
