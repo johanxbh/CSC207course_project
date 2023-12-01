@@ -1,10 +1,11 @@
-package interface_adapter;
+package interface_adapter.post;
 
 public class postState {
     private String postText;
     private String postError;
     private String postSuccess;
     private String postInputText;
+    private String postPictureText;
     public postState(){
     }
     public String getPostText(){
@@ -36,5 +37,10 @@ public class postState {
     }
     public void setPostInputText(String text){
         postInputText = text;
+    }
+    public void setPostPictureText(String text){postPictureText = text;}
+
+    public String getPostPictureText() {
+        return postPictureText;
     }
 }
