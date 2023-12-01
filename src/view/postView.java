@@ -70,7 +70,6 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
             public void actionPerformed(ActionEvent e) {
                 if(e.getSource().equals(selectPictures)){
                     JFileChooser fileChooser = new JFileChooser();
-                    // 设置文件选择器的过滤器，限制用户选择的文件类型为图片文件
                     fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                         @Override
                         public boolean accept(java.io.File f) {
@@ -159,7 +158,6 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
     }
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        //I want to create a JTextArea below
 
         if (evt.getPropertyName().equals(postViewModel.POST_BUTTON_LABEL)) {
             postState state = postViewModel.getState();
