@@ -3,38 +3,41 @@ package data_access;
 import entities.postEntity;
 import okhttp3.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public class postDataAccessObject implements postDAO{
+public class postDataAccessObject implements postDAO {
     private String API_TOKEN;
     private String OUT_PUT_DIRECTORY_NAME = "/Output";
     private String LATEST_POST_NUM = "/LATEST_NUM.txt";
     private String APPENDING_FILE = "/APPENDING_FILE.txt";
     private String POST_DIRECTORY = "/POST";
+
     public postDataAccessObject(String api) throws IOException {
         File outputDirectory = new File(OUT_PUT_DIRECTORY_NAME);
         outputDirectory.getParentFile().mkdir();
         this.API_TOKEN = api;
-        if (!checkFileExist(APPENDING_FILE)){
+        if (!checkFileExist(APPENDING_FILE)) {
             createTXT(APPENDING_FILE, "false");
-            uploadFile( APPENDING_FILE,APPENDING_FILE);
+            uploadFile(APPENDING_FILE, APPENDING_FILE);
         }
-        if(! checkFileExist(LATEST_POST_NUM)){
+        if (!checkFileExist(LATEST_POST_NUM)) {
             createTXT(LATEST_POST_NUM, "0");
             uploadFile(LATEST_POST_NUM, LATEST_POST_NUM);
         }
-        if(! checkFileExist(POST_DIRECTORY)){
+        if (!checkFileExist(POST_DIRECTORY)) {
             createFolder(POST_DIRECTORY);
         }
 
     }
 
     @Override
-    public postEntity getMostRecentPost() {
+    public postEntity getMostRecentPost() throws IOException {
+        downloadFile(LATEST_POST_NUM, LATEST_POST_NUM);
+        String newestNum = readContent(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
+        downloadFile(newestNum, OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
 
     }
 
@@ -67,6 +70,7 @@ public class postDataAccessObject implements postDAO{
     public postEntity getlatestPost(List<postEntity> posts) {
         return null;
     }
+
     private boolean checkFileExist(String fileName) throws IOException {
         OkHttpClient client = new OkHttpClient();
         try {
@@ -97,7 +101,8 @@ public class postDataAccessObject implements postDAO{
         }
         return false;
     }
-    private File createTXT(String filepath, String content){
+
+    private File createTXT(String filepath, String content) {
         try {
             File file = new File(filepath);
 
@@ -120,7 +125,8 @@ public class postDataAccessObject implements postDAO{
             return null;
         }
     }
-    private boolean uploadFile(String filepath, String remotepath){
+
+    private boolean uploadFile(String filepath, String remotepath) {
 
 
         File fileToUpload = new File(filepath);
@@ -157,7 +163,8 @@ public class postDataAccessObject implements postDAO{
             return false;
         }
     }
-    private boolean createFolder(String remotefoldername){
+
+    private boolean createFolder(String remotefoldername) {
 
         OkHttpClient client = new OkHttpClient();
 
@@ -185,7 +192,8 @@ public class postDataAccessObject implements postDAO{
             return false;
         }
     }
-    private boolean downloadFile(String remotepath, String localpath){
+
+    private boolean downloadFile(String remotepath, String localpath) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -199,7 +207,7 @@ public class postDataAccessObject implements postDAO{
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 // Save the downloaded file locally
-                FileOutputStream outputStream = new FileOutputStream(localpath, false);
+                FileOutputStream outputStream = new FileOutputStream(OUT_PUT_DIRECTORY_NAME + "/" + localpath, false);
                 outputStream.write(response.body().bytes());
                 outputStream.close();
                 return true;
@@ -210,5 +218,19 @@ public class postDataAccessObject implements postDAO{
             e.printStackTrace();
             return false;
         }
+    }
+
+    private String readContent(String filepath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filepath));
+        String all = null;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            all = all + line; // Or perform operations with the read line
+        }
+        return all;
+    }
+    private postEntity createPostEntity(String postEntityText){
+        String[] listOfProperty = postEntityText.split("\n");
+        listOfProperty
     }
 }
