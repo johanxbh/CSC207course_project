@@ -3,13 +3,15 @@ package entities;
 import java.util.ArrayList;
 
     public class postEntity {
-    private Object postInfo;
+    private String postPicture;
+    private String posttext;
     private ArrayList<String> postComment;
     private Integer postLiked;
     private static Integer countpostID = 0;
     private Integer postID;
-    public postEntity(Object postInfo){
-        this.postInfo = postInfo;
+    public postEntity(String posttext, String postPicture){
+        this.postPicture = postPicture;
+        this.posttext = posttext;
         postLiked = 0;
         postComment = new ArrayList<String>();
         countpostID ++;
@@ -24,14 +26,17 @@ import java.util.ArrayList;
     public Integer getPostLiked() {
             return postLiked;
         }
-    public Object getPostInfo() {
-            return postInfo;
+    public String getPosttext() {
+            return posttext;
         }
     public ArrayList<String> getPostComment() {
             return postComment;
         }
     public Integer getId(){
         return this.postID;
+    }
+    public String getPostPicture(){
+        return postPicture;
     }
     }
 
