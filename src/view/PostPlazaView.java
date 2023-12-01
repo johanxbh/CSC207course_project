@@ -197,6 +197,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                             if (!haveOpenedJFrame) {
                                 showDialog(newpost);
                             }
+
                         }
                     }
                 }
@@ -220,6 +221,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         return buttonPanel;
     }
 
+
     private void showDialog(JButton button) {
         String buttonName = button.getName();
         JFrame newFrame = new JFrame();
@@ -240,5 +242,6 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
     public void closeWindows(){
         openedJFrame.dispose();
         haveOpenedJFrame = false;
+
     }
 }

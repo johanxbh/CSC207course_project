@@ -16,8 +16,13 @@ public class LoginPresenter implements LoginOutputBoundary {
     @Override
     public void prepareSuccessView(LoginOutputData response) {
         // On success, switch to the post plaza in view.
+<<<<<<< HEAD
 
 
         this.viewManagerModel.firePropertyChanged();
+=======
+        viewManagerModel.setActiveView("postPlaza");
+        viewManagerModel.firePropertyChanged();
+>>>>>>> main
     }
 }
