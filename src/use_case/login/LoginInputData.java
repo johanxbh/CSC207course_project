@@ -1,15 +1,13 @@
 package use_case.login;
 
-import entities.User;
 public class LoginInputData {
-
-    final private int username;
+    private final int username;
 
     public LoginInputData(int username) {
         this.username = username;
     }
 
-    int getUsername() {
+    public int getUsername() {
         return username;
     }
 }

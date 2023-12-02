@@ -8,7 +8,7 @@ public class User {
     private final String id;
     private HashMap<Integer, Integer> likedpost;
 
-    public User(String id) {
+    public User(int userId, String id) {
         this.id = id;
     }
     public void addLikedPost(postEntity newLikedPost){
@@ -24,4 +24,7 @@ public class User {
         return new ArrayList<Integer>(keys);
     }
 
+    public String getName() {
+        return id;
+    }
 }
