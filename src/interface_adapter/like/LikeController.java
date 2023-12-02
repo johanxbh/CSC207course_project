@@ -1,8 +1,6 @@
 package interface_adapter.like;
 
 import entities.postEntity;
-import use_case.comment.CommentInputBoundary;
-import use_case.comment.CommentInputData;
 import use_case.like.LikeInputBoundary;
 import use_case.like.LikeInputData;
 
@@ -13,8 +11,8 @@ public class LikeController {
         this.likeInteracter = likeInteracter;
     }
 
-    public void excute(postEntity postEntity) {
-        LikeInputData likeInputData = new LikeInputData(postEntity);
+    public void execute(postEntity post) {
+        LikeInputData likeInputData = new LikeInputData(post);
         likeInteracter.execute(likeInputData);
     }
 }
