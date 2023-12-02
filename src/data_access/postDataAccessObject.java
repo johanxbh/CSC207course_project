@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.postEntity;
 import okhttp3.*;
+import okio.BufferedSink;
+import okio.Okio;
 
 import java.io.*;
 import java.util.List;
@@ -12,24 +14,29 @@ import java.util.regex.Pattern;
 
 public class postDataAccessObject implements postDAO {
     private String API_TOKEN;
+    private String PARANT_DIRECTOYRY;
     private String OUT_PUT_DIRECTORY_NAME = "/Output";
-    private String LATEST_POST_NUM = "/LATEST_NUM.txt";
-    private String APPENDING_FILE = "/APPENDING_FILE.txt";
+    private String LATEST_POST_NUM = "LATEST_NUM.txt";
+    private String APPENDING_FILE = "APPENDING_FILE.txt";
     private String POST_DIRECTORY = "/POST";
-    private String DOWNLOAD_DIRECTORY_NAME = "/Download";
-    private String UPLOAD_DIRECTORY_NAME = "/Upload";
+    private String DOWNLOAD_DIRECTORY_NAME = "Download";
+    private String UPLOAD_DIRECTORY_NAME = "Upload";
 
     public postDataAccessObject(String api) throws IOException {
         File outputDirectory = new File(OUT_PUT_DIRECTORY_NAME);
         outputDirectory.getParentFile().mkdir();
         this.API_TOKEN = api;
-        if (!checkFileExist(APPENDING_FILE)) {
+        if (!checkFileExist("/"+APPENDING_FILE)) {
             createTXT(APPENDING_FILE, "false");
-            uploadFile(APPENDING_FILE, APPENDING_FILE);
+            File file = new File(APPENDING_FILE);
+            String fileToUpload = file.getAbsolutePath();
+            uploadFile(fileToUpload,  APPENDING_FILE);
         }
-        if (!checkFileExist(LATEST_POST_NUM)) {
-            createTXT(LATEST_POST_NUM, "0");
-            uploadFile(LATEST_POST_NUM, LATEST_POST_NUM);
+        if (!checkFileExist("/"+LATEST_POST_NUM)) {
+            createTXT(LATEST_POST_NUM, "1");
+            File file = new File(LATEST_POST_NUM);
+            String fileToUpLoad = file.getAbsolutePath();
+            uploadFile(fileToUpLoad, LATEST_POST_NUM);
         }
         if (!checkFileExist(POST_DIRECTORY)) {
             createFolder(POST_DIRECTORY);
@@ -49,8 +56,9 @@ public class postDataAccessObject implements postDAO {
 
     @Override
     public void savePost(postEntity post) throws IOException {
-        String appendingFilePath = OUT_PUT_DIRECTORY_NAME + "/" + APPENDING_FILE;
-        downloadFile(APPENDING_FILE,appendingFilePath);
+        deleteFile(APPENDING_FILE);
+        String appendingFilePath = APPENDING_FILE;
+        downloadFile("/"+APPENDING_FILE,appendingFilePath);
         String content = readContent(appendingFilePath);
         while (content == "true"){
             try {
@@ -63,28 +71,41 @@ public class postDataAccessObject implements postDAO {
             downloadFile(APPENDING_FILE,appendingFilePath);
             content = readContent(appendingFilePath);
         }
-        deleteFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE);
-        createTXT(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, "true");
-        uploadFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, POST_DIRECTORY+APPENDING_FILE);
+        deleteFile(APPENDING_FILE);
+        createTXT(APPENDING_FILE, "true");
+        File file = new File(APPENDING_FILE);
+        String abpFile = file.getAbsolutePath();
+        uploadFile(abpFile, POST_DIRECTORY+ "/" + APPENDING_FILE);
 
-        deleteFile(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
-        downloadFile(POST_DIRECTORY + LATEST_POST_NUM, OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
-        Integer newPostID = Integer.parseInt(readContent(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM))+ 1;
+        deleteFile(LATEST_POST_NUM);
+        downloadFile("/"+LATEST_POST_NUM, LATEST_POST_NUM);
+        System.out.println(readContent(LATEST_POST_NUM));
+        Integer newPostID = Integer.parseInt(readContent(LATEST_POST_NUM))+ 1;
         post.setPostID(newPostID);
         String picturePath = post.getPostPicture();
+        System.out.println(checkLocalFileExist(picturePath));
         if (checkLocalFileExist(picturePath)){
             String type = checkPictureType(picturePath);
-            uploadFile(picturePath, POST_DIRECTORY + "/" + post.getId() +"." +type);
+            System.out.println(picturePath +"|"+ "POST" + "/" + post.getId().toString() +"." +type);
+            uploadFile(picturePath, "POST" + "/" + post.getId().toString() +"." +type);
         }
         String postpath = convertToJson(post);
-        uploadFile(postpath,POST_DIRECTORY + "/" + post.getId() + ".json");
-        deleteFile(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM);
+        File jsonFile = new File(postpath);
+        String abpJosnFile = jsonFile.getAbsolutePath();
+        System.out.println(abpJosnFile);
+        System.out.println(POST_DIRECTORY + "/" + post.getId().toString() + ".json");
+        uploadFile(abpJosnFile,"POST" + "/" + post.getId().toString() + ".json");
+        System.out.println("json upload action over");
+
+        deleteFile(LATEST_POST_NUM);
         String newID = newPostID.toString();
-        createTXT(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM, newID);
-        uploadFile(OUT_PUT_DIRECTORY_NAME + LATEST_POST_NUM,LATEST_POST_NUM);
-        deleteFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE);
-        createTXT(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, "false");
-        uploadFile(OUT_PUT_DIRECTORY_NAME + APPENDING_FILE, POST_DIRECTORY+APPENDING_FILE);
+        createTXT(LATEST_POST_NUM, newID);
+        deleteFileFromBox("/" + LATEST_POST_NUM);
+        uploadFile(new File(LATEST_POST_NUM).getAbsolutePath(), LATEST_POST_NUM);
+
+        deleteFile(APPENDING_FILE);
+        createTXT(APPENDING_FILE, "false");
+        uploadFile(new File(APPENDING_FILE).getAbsolutePath(), APPENDING_FILE);
     }
 
     @Override
@@ -98,13 +119,24 @@ public class postDataAccessObject implements postDAO {
     }
 
     @Override
-    public postEntity getPost(Integer postid) {
+    public postEntity getPost(Integer postid) throws IOException {
+        if (checkLocalFileExist(postid.toString()+".json ")){
+            return createPostEntityFromJson(postid.toString()+".json");
+        }
         String remoteDirectory = POST_DIRECTORY + "/" + postid.toString() + ".json";
-        downloadFile(remoteDirectory, OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + postid.toString() + ".json");
-        postEntity newPostEntity = createPostEntityFromJson(DOWNLOAD_DIRECTORY_NAME + postid.toString() + ".json");
-        String remotePicturePath = POST_DIRECTORY + "/" + postid + "." + checkPictureType(newPostEntity.getPostPicture());
-        downloadFile(remotePicturePath, OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + postid + "." + checkPictureType(newPostEntity.getPostPicture()));
-        newPostEntity.setPothPicture(OUT_PUT_DIRECTORY_NAME + DOWNLOAD_DIRECTORY_NAME + postid + "." + checkPictureType(newPostEntity.getPostPicture()));
+        downloadFile(remoteDirectory, postid.toString() + ".json");
+        postEntity newPostEntity = createPostEntityFromJson(postid.toString() + ".json");
+        String remotePicturePath =  POST_DIRECTORY + "/" + postid.toString() + "." + checkPictureType(newPostEntity.getPostPicture());
+        try {
+            System.out.println("check if the file exist on the cloud"+checkFileExist("POST" + "/" + postid.toString() + "." + checkPictureType(newPostEntity.getPostPicture())));
+            System.out.println("check the file path:"+POST_DIRECTORY + "/" + postid.toString() + "." + checkPictureType(newPostEntity.getPostPicture()));
+            if (checkFileExist(POST_DIRECTORY + "/" + postid.toString() + "." + checkPictureType(newPostEntity.getPostPicture()))) {
+                downloadFile(remotePicturePath, postid.toString() + "." + checkPictureType(newPostEntity.getPostPicture()));
+                newPostEntity.setPostPicture(postid.toString() + "." + checkPictureType(newPostEntity.getPostPicture()));
+            }
+        } catch (Exception e){
+            return newPostEntity;
+        }
         return newPostEntity;
     }
 
@@ -118,38 +150,35 @@ public class postDataAccessObject implements postDAO {
         return null;
     }
 
-    private boolean checkFileExist(String fileName) throws IOException {
+    public boolean checkFileExist(String fileName) throws IOException {
         OkHttpClient client = new OkHttpClient();
         try {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"),
-                    "{\"path\": \"" + fileName + "\", \"include_media_info\": false}");
+            String url = "https://api.dropboxapi.com/2/files/get_metadata";
+            String jsonBody = "{\"path\": \"" + fileName + "\"}";
 
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonBody);
             Request request = new Request.Builder()
-                    .url("https://api.dropboxapi.com/2/files/get_metadata")
+                    .url(url)
                     .addHeader("Authorization", "Bearer " + API_TOKEN)
                     .addHeader("Content-Type", "application/json")
-                    .post(requestBody)
+                    .post(body)
                     .build();
 
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                String responseBody = response.body().string();
-                if (responseBody.contains("metadata")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                System.out.println("Request failed: " + response.code() + " - " + response.message());
+                // File exists
+                return true;
             }
+            // File does not exist or other error occurred
+            return false;
         } catch (Exception e) {
+            // Error occurred during request
             e.printStackTrace();
-            throw e;
+            return false;
         }
-        return false;
     }
 
-    private File createTXT(String filepath, String content) {
+    private void createTXT(String filepath, String content) {
         try {
             File file = new File(filepath);
 
@@ -166,50 +195,39 @@ public class postDataAccessObject implements postDAO {
             FileWriter writer = new FileWriter(file);
             writer.write(content);
             writer.close();
-            return file;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
-    private boolean uploadFile(String filepath, String remotepath) {
-
-
-        File fileToUpload = new File(filepath);
-
+    private void uploadFile(String localFilePath, String remoteFileName) {
         OkHttpClient client = new OkHttpClient();
 
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("path", remotepath)
-                .addFormDataPart("mode", "add")
-                .addFormDataPart("autorename", "true")
-                .addFormDataPart("mute", "false")
-                .addFormDataPart("file", fileToUpload.getName(),
-                        RequestBody.create(MediaType.parse("application/octet-stream"), fileToUpload))
-                .build();
+        File fileToUpload = new File(localFilePath);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), fileToUpload);
 
         Request request = new Request.Builder()
                 .url("https://content.dropboxapi.com/2/files/upload")
                 .addHeader("Authorization", "Bearer " + API_TOKEN)
+                .addHeader("Dropbox-API-Arg", "{\"path\": \"/" + remoteFileName + "\", \"mode\": \"add\", \"autorename\": false, \"mute\": false}")
                 .addHeader("Content-Type", "application/octet-stream")
-                .addHeader("Dropbox-API-Arg", "{\"path\": \"" + remotepath + "\",\"mode\": \"add\",\"autorename\": true,\"mute\": false}")
                 .post(requestBody)
                 .build();
 
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                return true;
+                System.out.println("File uploaded successfully to root directory!");
             } else {
-                return false;
+                System.out.println("File upload failed: " + response.code() + " - " + response.message());
+                System.out.println("Response Body: " + response.body().string());
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
     }
+
 
     private boolean createFolder(String remotefoldername) {
 
@@ -240,7 +258,7 @@ public class postDataAccessObject implements postDAO {
         }
     }
 
-    private boolean downloadFile(String remotepath, String localpath) {
+    public boolean downloadFile(String remotepath, String localpath) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
@@ -253,23 +271,25 @@ public class postDataAccessObject implements postDAO {
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                // Save the downloaded file locally
-                FileOutputStream outputStream = new FileOutputStream(OUT_PUT_DIRECTORY_NAME + "/" + localpath, false);
-                outputStream.write(response.body().bytes());
-                outputStream.close();
+                File downloadedFile = new File(localpath);
+                BufferedSink sink = Okio.buffer(Okio.sink(downloadedFile));
+                sink.writeAll(response.body().source());
+                sink.close();
+                System.out.println("File downloaded successfully to: " + localpath);
                 return true;
             } else {
-                return false;
+                System.out.println("File download failed: " + response.code() + " - " + response.message());
+                System.out.println("Response Body: " + response.body().string());
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     private String readContent(String filepath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filepath));
-        String all = null;
+        String all = "";
         String line;
         while ((line = reader.readLine()) != null) {
             all = all + line; // Or perform operations with the read line
@@ -297,10 +317,10 @@ public class postDataAccessObject implements postDAO {
         String json = gson.toJson(post);
 
         // Save JSON to a file
-        String filePath = OUT_PUT_DIRECTORY_NAME + UPLOAD_DIRECTORY_NAME + "/" + postId + ".json"; // Replace with your desired file path
+        String filePath = postId + ".json"; // Replace with your desired file path
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(json);
-            return OUT_PUT_DIRECTORY_NAME + UPLOAD_DIRECTORY_NAME + postId + ".json";
+            return postId + ".json";
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -319,11 +339,11 @@ public class postDataAccessObject implements postDAO {
         }
         return false;
     }
-    private String checkPictureType(String picturepath){
+    public String checkPictureType(String picturepath){
         String input = "This is a string with .ABC and .DEFGH, and .IJKL";
 
-        Pattern pattern = Pattern.compile("\\.([A-Za-z]+)"); // Pattern for dot followed by letters
-        Matcher matcher = pattern.matcher(input);
+        Pattern pattern = Pattern.compile("\\.(jpg|jpeg|png|gif|bmp)$", Pattern.CASE_INSENSITIVE); // Pattern for dot followed by letters
+        Matcher matcher = pattern.matcher(picturepath);
 
         String lastXXX = ""; // Variable to store the last XXX text found
 
@@ -333,9 +353,34 @@ public class postDataAccessObject implements postDAO {
         }
 
         if (!lastXXX.isEmpty()) {
-            return null;
-        } else {
             return lastXXX;
+        } else {
+            return null;
+        }
+    }
+    private void deleteFileFromBox(String dropboxFilePath) {
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\"path\": \"" + dropboxFilePath + "\"}");
+
+        Request request = new Request.Builder()
+                .url("https://api.dropboxapi.com/2/files/delete_v2")
+                .post(body)
+                .addHeader("Authorization", "Bearer " + API_TOKEN)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                System.out.println("File deleted successfully.");
+            } else {
+                System.out.println("File deletion failed: " + response.code() + " - " + response.message());
+                System.out.println("Response Body: " + response.body().string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
