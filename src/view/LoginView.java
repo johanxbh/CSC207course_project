@@ -1,6 +1,5 @@
 package view;
 
-import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
 
@@ -8,29 +7,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
-public class LoginView extends JPanel implements ActionListener, PropertyChangeListener {
+public class LoginView extends JPanel implements ActionListener {
 
     public final String viewName = "log in";
-
-    final JTextField usernameInputField = new JTextField(15);
-    private final JLabel usernameErrorField = new JLabel();
-
-    final JPasswordField passwordInputField = new JPasswordField(15);
-    private final JLabel passwordErrorField = new JLabel();
+    private final LoginViewModel loginViewModel;
 
     final JButton logIn;
     final JButton cancel;
-    private final LoginController loginController;
 
-    public LoginView(LoginViewModel loginViewModel, LoginController controller) {
-
-        this.loginController = controller;
-        loginViewModel.addPropertyChangeListener(this);
+    /**
+     * A window with a title and a JButton.
+     */
+    public LoginView(LoginViewModel loginViewModel) {
+        this.loginViewModel = loginViewModel;
+        this.loginViewModel.addPropertyChangeListener(evt -> {
+            LoginState state = (LoginState) evt.getNewValue();
+            // You can handle any state changes here if needed
+        });
 
         JLabel title = new JLabel("Login Screen");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -41,58 +35,11 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         cancel = new JButton(loginViewModel.CANCEL_BUTTON_LABEL);
         buttons.add(cancel);
 
-        logIn.addActionListener(                // This creates an anonymous subclass of ActionListener and instantiates it.
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(logIn)) {
-                            LoginState currentState = loginViewModel.getState();
-
-                            loginController.execute(
-                                    currentState.getUsername()
-                            );
-                        }
-                    }
-                }
-        );
-
+        logIn.addActionListener(this);
         cancel.addActionListener(this);
 
-        usernameInputField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                LoginState currentState = loginViewModel.getState();
-                loginViewModel.setState(currentState);
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-        });
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        passwordInputField.addKeyListener(
-                new KeyListener() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        LoginState currentState = loginViewModel.getState();
-                        loginViewModel.setState(currentState);
-                    }
-
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                    }
-
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                    }
-                });
-
         this.add(title);
-        this.add(usernameErrorField);
         this.add(buttons);
     }
 
@@ -100,16 +47,13 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
      * React to a button click that results in evt.
      */
     public void actionPerformed(ActionEvent evt) {
-        System.out.println("Click " + evt.getActionCommand());
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        LoginState state = (LoginState) evt.getNewValue();
-        setFields(state);
-    }
-
-    private void setFields(LoginState state) {
+        if (evt.getSource() == logIn) {
+            // Handle login logic here
+            System.out.println("Login button clicked");
+        } else if (evt.getSource() == cancel) {
+            // Handle cancel logic here
+            System.out.println("Cancel button clicked");
+        }
     }
 
 }
