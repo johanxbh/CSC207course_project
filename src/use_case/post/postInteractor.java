@@ -3,6 +3,7 @@ package use_case.post;
 import entities.postEntity;
 import data_access.postDAO;
 
+import java.io.IOException;
 import java.util.List;
 
 public class postInteractor implements postInputBoundary{
@@ -13,7 +14,7 @@ public class postInteractor implements postInputBoundary{
         this.dataAccessObj = dataAccessObj;
     }
     @Override
-    public void execute(PostinputData data) {
+    public void execute(PostinputData data) throws IOException {
         if (data.getPostText() == null && data.getPostPicture() == null){
             postPresenter.prepareFailView();
         }

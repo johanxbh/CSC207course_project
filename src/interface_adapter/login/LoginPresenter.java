@@ -1,5 +1,6 @@
 package interface_adapter.login;
 
+import entities.User;
 import interface_adapter.logged_in.LoggedInState;
 import interface_adapter.logged_in.LoggedInViewModel;
 
@@ -32,5 +33,15 @@ public class LoginPresenter implements LoginOutputBoundary {
 
         this.viewManagerModel.setActiveView(loggedInViewModel.getViewName());
         this.viewManagerModel.firePropertyChanged();
+    }
+
+    @Override
+    public void presentLoginSuccess(User user) {
+
+    }
+
+    @Override
+    public void presentLoginFailure() {
+
     }
 }

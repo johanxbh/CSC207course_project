@@ -3,7 +3,7 @@ package view;
 import entities.postEntity;
 import interface_adapter.back.BackController;
 import interface_adapter.comment.CommentController;
-import interface_adapter.postState;
+import interface_adapter.post.postState;
 import interface_adapter.post_plaza.PostPlazaViewModel;
 
 import javax.swing.*;
@@ -242,6 +242,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
     public void closeWindows(){
         openedJFrame.dispose();
         haveOpenedJFrame = false;
-
     }
+
+
 }
