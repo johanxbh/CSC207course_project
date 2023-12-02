@@ -1,6 +1,9 @@
 package use_case.login;
 
-public interface LoginOutputBoundary {
+import entities.User;
 
-    void prepareSuccessView(LoginOutputData user);
+public interface LoginOutputBoundary {
+    void presentLoginSuccess(User user);
+    void presentLoginFailure();
 }
+

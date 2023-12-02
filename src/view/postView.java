@@ -165,7 +165,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
                 JOptionPane.showMessageDialog(this, state.getPostError());
             }
             else {
-                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostText() + ";" + state.getPostPictureText());
+                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo() + ";" + state.getPostPictureText());
                 SwingUtilities.getWindowAncestor(this).dispose();
                 SwingUtilities.invokeLater(() -> {
                     JFrame frame = new JFrame("Image Display");
