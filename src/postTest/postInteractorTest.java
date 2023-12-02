@@ -1,4 +1,4 @@
-package tests;
+package postTest;
 import data_access.InMemoryDataAccessObject;
 import entities.postEntity;
 import org.junit.Before;
