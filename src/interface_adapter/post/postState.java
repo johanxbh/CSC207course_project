@@ -1,21 +1,21 @@
 package interface_adapter.post;
 
 public class postState {
-    private String postText;
+    private String postInfo;
     private String postError;
     private String postSuccess;
     private String postInputText;
     private String postPictureText;
     public postState(){
     }
-    public String getPostText(){
-        return postText;
+    public String getPostInfo(){
+        return postInfo;
     }
     public postState(postState copy){
-        this.postText = copy.getPostText();
+        this.postInfo = copy.getPostInfo();
     }
     public void setPostText(String newPostText){
-        this.postText = newPostText;
+        this.postInfo = newPostText;
     }
 
     public void setPostError(String postError) {
