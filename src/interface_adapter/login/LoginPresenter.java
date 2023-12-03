@@ -1,25 +1,47 @@
 package interface_adapter.login;
 
-import interface_adapter.postViewModel;
-import interface_adapter.postState;
-import interface_adapter.login.LoginViewModel;
+import entities.User;
+import interface_adapter.logged_in.LoggedInState;
+import interface_adapter.logged_in.LoggedInViewModel;
+
 import interface_adapter.ViewManagerModel;
+
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
 
 public class LoginPresenter implements LoginOutputBoundary {
 
-    private final ViewManagerModel viewManagerModel;
+    private final LoginViewModel loginViewModel;
+    private final LoggedInViewModel loggedInViewModel;
+    private ViewManagerModel viewManagerModel;
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
+                          LoggedInViewModel loggedInViewModel,
                           LoginViewModel loginViewModel) {
         this.viewManagerModel = viewManagerModel;
+        this.loggedInViewModel = loggedInViewModel;
+        this.loginViewModel = loginViewModel;
     }
 
     @Override
     public void prepareSuccessView(LoginOutputData response) {
-        // On success, switch to the post plaza in view.
-        viewManagerModel.setActiveView("postPlaza");
-        viewManagerModel.firePropertyChanged();
+        // On success, switch to the logged in view.
+
+        LoggedInState loggedInState = loggedInViewModel.getState();
+        this.loggedInViewModel.setState(loggedInState);
+        this.loggedInViewModel.firePropertyChanged();
+
+        this.viewManagerModel.setActiveView(loggedInViewModel.getViewName());
+        this.viewManagerModel.firePropertyChanged();
+    }
+
+    @Override
+    public void presentLoginSuccess(User user) {
+
+    }
+
+    @Override
+    public void presentLoginFailure() {
+
     }
 }

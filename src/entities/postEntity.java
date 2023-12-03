@@ -38,6 +38,16 @@ import java.util.ArrayList;
     public String getPostPicture(){
         return postPicture;
     }
+    public String getPostInfo(){
+        return this.posttext;
+    }
+
+    public void setPostID(Integer newPostID) {
+    this.postID = newPostID;
+    }
+    public void setPostPicture(String postPicture){
+    this.postPicture = postPicture;
+    }
     }
 
 
