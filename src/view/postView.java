@@ -94,7 +94,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                         @Override
-                        public boolean accept(java.io.File f) {
+                        public boolean accept(File f) {
                             return f.getName().toLowerCase().endsWith(".png")
                                     || f.getName().toLowerCase().endsWith(".jpg")
                                     || f.getName().toLowerCase().endsWith(".jpeg")

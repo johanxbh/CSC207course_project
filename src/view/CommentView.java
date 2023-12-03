@@ -7,8 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class CommentView{
+public class CommentView extends JPanel implements PropertyChangeListener, ActionListener {
 
     CommentViewModel commentViewModel;
     CommentController commentController;
@@ -17,12 +19,17 @@ public class CommentView{
     public CommentView(CommentViewModel commentViewModel, CommentController commentController) {
         this.commentViewModel = commentViewModel;
         this.commentController = commentController;
+        this.add(this.createCommentPanel());
     }
 
     public JPanel createCommentPanel(){
-        JTextArea commentTextField = new JTextArea("Enter text");
-        commentTextField.setPreferredSize(new Dimension(400, 60));
+        JTextArea commentTextField = new JTextArea();
+        commentTextField.setPreferredSize(new Dimension(500, 500));
+        commentTextField.setLineWrap(true);
+        commentTextField.setWrapStyleWord(true);
+        commentTextField.setEditable(true);
         JPanel commentTextPanel = new JPanel();
+        commentTextPanel.setLayout(new BoxLayout(commentTextPanel, BoxLayout.Y_AXIS));
         commentTextPanel.add(commentTextField);
         JButton submitButton = new JButton("Submit Comment");
         submitButton.addActionListener(
@@ -38,5 +45,15 @@ public class CommentView{
         commentTextPanel.add(submitButton);
 
         return commentTextPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
     }
 }
