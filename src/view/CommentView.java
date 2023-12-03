@@ -1,17 +1,12 @@
 package view;
 
-import entities.postEntity;
 import interface_adapter.comment.CommentController;
 import interface_adapter.comment.CommentViewModel;
-import interface_adapter.like.LikeController;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 
 public class CommentView{
 
