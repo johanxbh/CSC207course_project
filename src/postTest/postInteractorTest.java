@@ -8,6 +8,7 @@ import use_case.post.postInteractor;
 import use_case.post.postOutputBoundary;
 import use_case.post.postOutputData;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ public class postInteractorTest {
         successDataAccessObj = new InMemoryDataAccessObject();
     }
     @Test
-    public void testSuccessPost(){
+    public void testSuccessPost() throws IOException {
         postOutputBoundary successPresenter = new postOutputBoundary() {
             @Override
             public void prepareSuccessView(postOutputData data) {
@@ -45,7 +46,7 @@ public class postInteractorTest {
         successInteractor.execute(data);
     }
     @Test
-    public void testFailPost(){
+    public void testFailPost() throws IOException {
         postOutputBoundary failPresenter = new postOutputBoundary() {
             @Override
             public void prepareSuccessView(postOutputData data) {

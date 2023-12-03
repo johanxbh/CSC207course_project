@@ -10,7 +10,7 @@ public class postViewModel extends ViewModel {
     public static final String POST_BUTTON_LABEL = "post";
     public static final String PICTURE_BUTTON_LABEL = "selectPicture";
     public static final String LABLE_TITLE = "postview";
-    public static final String RANDOM_GENERATE_BUTTON_LABEL = "generateRandomPost";
+    public static final String GENERATE_POST_LABEL = "generatePost";
     private interface_adapter.post.postState postState = new postState();
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
     public postViewModel() {
