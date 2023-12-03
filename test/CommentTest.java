@@ -1,4 +1,3 @@
-package test;
 import data_access.InMemoryDataAccessObject;
 import entities.postEntity;
 import org.junit.Before;
@@ -14,7 +13,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CommentInteractorTest {
+public class CommentTest {
     private InMemoryDataAccessObject successDataAccessObj;
 
     private postEntity post;
