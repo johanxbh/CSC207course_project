@@ -7,8 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class CommentView{
+public class CommentView extends JPanel implements PropertyChangeListener, ActionListener {
 
     CommentViewModel commentViewModel;
     CommentController commentController;
@@ -38,5 +40,15 @@ public class CommentView{
         commentTextPanel.add(submitButton);
 
         return commentTextPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+
     }
 }
