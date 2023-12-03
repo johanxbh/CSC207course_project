@@ -1,7 +1,8 @@
 package interface_adapter.list_liked_post;
 
-import java.util.ArrayList;
 import entities.postEntity;
+
+import java.util.ArrayList;
 public class ListLikedPostState {
     private ArrayList<postEntity> listOfLikedPost = new ArrayList<postEntity>();
     private String postError = null;

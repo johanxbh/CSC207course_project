@@ -8,6 +8,7 @@ import okio.BufferedSink;
 import okio.Okio;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -110,7 +111,6 @@ public class postDataAccessObject implements postDAO {
 
     @Override
     public void cleanAllPost() {
-
     }
 
     @Override
@@ -141,13 +141,28 @@ public class postDataAccessObject implements postDAO {
     }
 
     @Override
-    public List<postEntity> getLatestPosts() {
-        return null;
+    public List<postEntity> getLatestPosts() throws IOException {
+        downloadFile("/" + LATEST_POST_NUM, LATEST_POST_NUM);
+        String latestPost = readContent(LATEST_POST_NUM);
+        Integer latestPostInt = Integer.parseInt(latestPost);
+        ArrayList<postEntity> listOfPost = new ArrayList<postEntity>();
+        if (latestPostInt <= 10){
+            for(int i = 1; i <= latestPostInt; i++){
+                listOfPost.add(getPost(i));
+            }
+        } else{
+            for(int i = latestPostInt -10; i <= latestPostInt; i++){
+                listOfPost.add(getPost(i));
+            }
+        }
+        return listOfPost;
     }
 
     @Override
-    public postEntity getlatestPost(List<postEntity> posts) {
-        return null;
+    public postEntity getlatestPost(List<postEntity> posts) throws IOException {
+        downloadFile("/" + LATEST_POST_NUM, LATEST_POST_NUM);
+        String latestPost = readContent(LATEST_POST_NUM);
+        return getPost(Integer.parseInt(latestPost));
     }
 
     public boolean checkFileExist(String fileName) throws IOException {

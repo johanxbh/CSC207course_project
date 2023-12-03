@@ -3,6 +3,7 @@ import entities.postEntity;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -15,7 +16,7 @@ public class LoginInteractorTest {
         successDataAccessObj = new InMemoryDataAccessObject();
     }
     @Test
-    public void testSuccessPost(){
+    public void testSuccessPost() throws IOException {
         postOutputBoundary successPresenter = new postOutputBoundary() {
             @Override
             public void prepareSuccessView(postOutputData data) {
@@ -40,7 +41,7 @@ public class LoginInteractorTest {
         successInteractor.execute(data);
     }
     @Test
-    public void testFailPost(){
+    public void testFailPost() throws IOException {
         postOutputBoundary failPresenter = new postOutputBoundary() {
             @Override
             public void prepareSuccessView(postOutputData data) {
