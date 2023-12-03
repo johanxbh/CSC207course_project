@@ -6,11 +6,12 @@ import data_access.postDAO;
 import entities.postEntity;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.back.BackController;
+import interface_adapter.cancel.cancelViewModel;
 import interface_adapter.comment.CommentController;
 import interface_adapter.comment.CommentPresenter;
 import interface_adapter.comment.CommentViewModel;
 import interface_adapter.list_liked_post.ListLikedPostController;
-import interface_adapter.postViewModel;
+import interface_adapter.post.postViewModel;
 import interface_adapter.post_plaza.PostPlazaState;
 import interface_adapter.post_plaza.PostPlazaViewModel;
 import use_case.comment.CommentInputBoundary;
@@ -41,16 +42,16 @@ public class MainTestForPostPlaza {
         PostPlazaViewModel postPlazaViewModel = new PostPlazaViewModel();
         ArrayList<postEntity> listOfpostEntites = new ArrayList<postEntity>();
         for (int i = 0; i <= 100; i++ ){
-            postEntity onePost = new postEntity("this is a post for test" + String.valueOf(i));
+            postEntity onePost = new postEntity("this is a post for test" + String.valueOf(i), "15.png");
             onePost.updatePostComment("this is a test for comment" + String.valueOf(i));
             listOfpostEntites.add(onePost);
         }
         for (int i = 0; i <= 100; i++){
-            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(500)+ "ng post");
+            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(500)+ "ng post", "15.png");
             listOfpostEntites.add(onePost);
         }
         for (int i = 0; i <= 100; i++){
-            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(1000)+ "ng post");
+            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(1000)+ "ng post","15.png");
             listOfpostEntites.add(onePost);
         }
         Iterator<postEntity> iter  =  listOfpostEntites.iterator();
@@ -79,7 +80,7 @@ public class MainTestForPostPlaza {
         postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();
 
 
-        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel);
+        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel, new cancelViewModel());
         PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);
 
 

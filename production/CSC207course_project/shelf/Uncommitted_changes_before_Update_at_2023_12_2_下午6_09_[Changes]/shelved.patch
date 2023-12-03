@@ -1,0 +1,37 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><project version=\"4\">\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_20\" project-jdk-name=\"corretto-20\" project-jdk-type=\"JavaSDK\">\n    <output url=\"file://$PROJECT_DIR$\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 91019f64a2cdf383d85ab60659ab93943e664178)
++++ b/.idea/misc.xml	(date 1701558577182)
+@@ -1,4 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_20" project-jdk-name="corretto-20" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$" />
+   </component>
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"CompilerConfiguration\">\n    <annotationProcessing>\n      <profile default=\"true\" name=\"Default\" enabled=\"true\">\n        <outputRelativeToContentRoot value=\"true\" />\n      </profile>\n    </annotationProcessing>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 91019f64a2cdf383d85ab60659ab93943e664178)
++++ b/.idea/compiler.xml	(date 1701558571190)
+@@ -6,5 +6,8 @@
+         <outputRelativeToContentRoot value="true" />
+       </profile>
+     </annotationProcessing>
++    <bytecodeTargetLevel>
++      <module name="CSC207course_project_final" target="20" />
++    </bytecodeTargetLevel>
+   </component>
+ </project>
+\ No newline at end of file

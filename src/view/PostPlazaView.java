@@ -43,15 +43,18 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         JPanel postsPanel = new JPanel();
         postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
         for (postEntity post : postPoolList) {
+            JPanel onePicture = this.createPostPicturePanel(post);
             JPanel onePost = this.createPostPanel(post);
+            postsPanel.add(onePicture);
             postsPanel.add(onePost);
             JPanel oneCommentPlaza = this.createPostCommentPanel(post);
             postsPanel.add(oneCommentPlaza);
             postsPanel.add(createButtonsForPost(new Dimension(500, 30)));
             postsPanel.add(Box.createVerticalStrut(80));
+
         }
         JScrollPane postsScroll = new JScrollPane(postsPanel);
-        postsScroll.getViewport().setPreferredSize(new Dimension(500, 500));
+        postsScroll.getViewport().setPreferredSize(new Dimension(700, 500));
         this.add(postsScroll);
         JPanel buttonPanel = this.createButtonsForPlaza(new Dimension(200, 500));
         this.add(buttonPanel);
@@ -80,7 +83,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         }
         int postPanelWidth = 500; // Set your desired width
         JPanel postPanel = new JPanel();
-        postPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        postPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
 //
         postPanel.setPreferredSize(new Dimension(postPanelWidth, postPanelHeight));
@@ -107,7 +110,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
             totalWords += i.length();
         }
         JPanel commentPanel = new JPanel();
-        commentPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        commentPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         int panelWidth = 500;
         int panelHeight;
         if (totalWords > 100) {
@@ -135,7 +138,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
 
     private JPanel createButtonsForPost(Dimension dimension) {
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        buttonPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         buttonPanel.setLayout(new FlowLayout());
         buttonPanel.setPreferredSize(dimension);
         buttonPanel.setMaximumSize(dimension);
@@ -239,10 +242,28 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
             }
         });
     }
-    public void closeWindows(){
+    private void closeWindows(){
         openedJFrame.dispose();
         haveOpenedJFrame = false;
     }
 
+    private JPanel createPostPicturePanel(postEntity post){
+        JPanel newPiture = new JPanel();
+        newPiture.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        JLabel newJLabel = new JLabel();
+        String picturePath = post.getPostPicture();
+        ImageIcon imageIcon = new ImageIcon(picturePath);
+        Image image = imageIcon.getImage();
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+        double ratio = Math.min(1 /Math.ceil(imageWidth / 500) , 1 / Math.ceil(imageHeight / 500));
+        double newWidth = imageWidth * ratio;
+        double newHeight = imageHeight * ratio;
+        Image resizedImage = image.getScaledInstance((int) newWidth, (int) newHeight, Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(resizedImage);
+        newJLabel.setIcon(imageIcon);
+        newPiture.add(newJLabel);
+        return newPiture;
 
+    }
 }

@@ -1,0 +1,441 @@
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"CompilerConfiguration\">\n    <annotationProcessing>\n      <profile default=\"true\" name=\"Default\" enabled=\"true\">\n        <outputRelativeToContentRoot value=\"true\" />\n      </profile>\n    </annotationProcessing>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/.idea/compiler.xml	(date 1701302487681)
+@@ -5,6 +5,12 @@
+       <profile default="true" name="Default" enabled="true">
+         <outputRelativeToContentRoot value="true" />
+       </profile>
++      <profile name="Maven default annotation processors profile" enabled="true">
++        <sourceOutputDir name="target/generated-sources/annotations" />
++        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
++        <outputRelativeToContentRoot value="true" />
++        <module name="untitled" />
++      </profile>
+     </annotationProcessing>
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1701302487697)
++++ b/.idea/encodings.xml	(date 1701302487697)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="file://$PROJECT_DIR$/untitled/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/untitled/src/main/resources" charset="UTF-8" />
++  </component>
++</project>
+\ No newline at end of file
+Index: src/app/MainTestForPostPlaza.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package app;\n\nimport data_access.FilePostAccessObject;\nimport entities.postEntity;\nimport interface_adapter.ViewManagerModel;\nimport interface_adapter.back.BackController;\nimport interface_adapter.comment.CommentController;\nimport interface_adapter.comment.CommentPresenter;\nimport interface_adapter.comment.CommentViewModel;\nimport interface_adapter.list_liked_post.ListLikedPostController;\nimport interface_adapter.post_plaza.PostPlazaState;\nimport interface_adapter.post_plaza.PostPlazaViewModel;\nimport use_case.comment.CommentInputBoundary;\nimport use_case.comment.CommentInteracter;\nimport use_case.comment.CommentOutputBoundary;\nimport use_case.list_liked_post.ListLikedPostInputBoundary;\nimport use_case.list_liked_post.ListLikedPostInteractor;\nimport view.PostPlazaView;\nimport view.ViewManager;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.Iterator;\n\npublic class MainTestForPostPlaza {\n    public static void main(String[] args){\n        JFrame application = new JFrame(\"PostPlaza\");\n        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);\n        CardLayout cardLayout = new CardLayout();\n\n        JPanel views = new JPanel(cardLayout);\n        application.add(views);\n        ViewManagerModel viewManagerModel = new ViewManagerModel();\n        new ViewManager(views, cardLayout, viewManagerModel);\n        PostPlazaViewModel postPlazaViewModel = new PostPlazaViewModel();\n        ArrayList<postEntity> listOfpostEntites = new ArrayList<postEntity>();\n        for (int i = 0; i <= 100; i++ ){\n            postEntity onePost = new postEntity(\"this is a post for test\" + String.valueOf(i));\n            onePost.updatePostComment(\"this is a test for comment\" + String.valueOf(i));\n            listOfpostEntites.add(onePost);\n        }\n        for (int i = 0; i <= 100; i++){\n            postEntity onePost = new postEntity(\"this is a extra l\" + \"o\".repeat(500)+ \"ng post\");\n            listOfpostEntites.add(onePost);\n        }\n        for (int i = 0; i <= 100; i++){\n            postEntity onePost = new postEntity(\"this is a extra l\" + \"o\".repeat(1000)+ \"ng post\");\n            listOfpostEntites.add(onePost);\n        }\n        Iterator<postEntity> iter  =  listOfpostEntites.iterator();\n        HashMap<Integer, postEntity> testHashMap = new HashMap<Integer, postEntity>();\n        for (int i = 0; i <= 300; i++){\n            postEntity onePost = iter.next();\n            testHashMap.put(i, onePost);\n        }\n        PostPlazaState postPlazaState = new PostPlazaState();\n        postPlazaState.setPostMap(testHashMap);\n        postPlazaViewModel.setState(postPlazaState);\n        postPlazaViewModel.firePropertyChanged();\n        viewManagerModel.setActiveView(postPlazaViewModel.getViewName());\n        viewManagerModel.firePropertyChanged();\n\n\n\n\n        ListLikedPostInputBoundary fakeinteractor = new ListLikedPostInteractor();\n        ListLikedPostController fakecontroller = new ListLikedPostController(fakeinteractor);\n        BackController fakebackcontroller = new BackController();\n\n        CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(new CommentViewModel(\"comment\"));\n        CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());\n        PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);\n\n\n\n        views.add(postPlazaView, postPlazaView.viewName);\n        viewManagerModel.setActiveView(postPlazaView.viewName);\n        viewManagerModel.firePropertyChanged();\n        application.pack();\n        application.setVisible(true);\n\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/MainTestForPostPlaza.java b/src/app/MainTestForPostPlaza.java
+--- a/src/app/MainTestForPostPlaza.java	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/src/app/MainTestForPostPlaza.java	(date 1701294115416)
+@@ -1,6 +1,8 @@
+ package app;
+ 
+ import data_access.FilePostAccessObject;
++import data_access.InMemoryDataAccessObject;
++import data_access.postDAO;
+ import entities.postEntity;
+ import interface_adapter.ViewManagerModel;
+ import interface_adapter.back.BackController;
+@@ -8,6 +10,7 @@
+ import interface_adapter.comment.CommentPresenter;
+ import interface_adapter.comment.CommentViewModel;
+ import interface_adapter.list_liked_post.ListLikedPostController;
++import interface_adapter.postViewModel;
+ import interface_adapter.post_plaza.PostPlazaState;
+ import interface_adapter.post_plaza.PostPlazaViewModel;
+ import use_case.comment.CommentInputBoundary;
+@@ -17,6 +20,7 @@
+ import use_case.list_liked_post.ListLikedPostInteractor;
+ import view.PostPlazaView;
+ import view.ViewManager;
++import view.postView;
+ 
+ import javax.swing.*;
+ import java.awt.*;
+@@ -71,6 +75,11 @@
+ 
+         CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(new CommentViewModel("comment"));
+         CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());
++        postViewModel postViewModel = new postViewModel();
++        postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();
++
++
++        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel);
+         PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);
+ 
+ 
+Index: src/interface_adapter/postPresenter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter;\nimport entities.postEntity;\nimport use_case.post.postOutputBoundary;\nimport use_case.post.postOutputData;\n\nimport java.util.List;\n\npublic class postPresenter implements postOutputBoundary{\n    private postViewModel postViewModel;\n    private ViewManagerModel viewManagerModel;\n    public postPresenter(postViewModel postViewModel, ViewManagerModel viewManagerModel){\n        this.postViewModel = postViewModel;\n        this.viewManagerModel = viewManagerModel;\n    }\n    @Override\n    public void prepareSuccessView(postOutputData data) {\n        postViewModel.getState().setPostText(data.getValue());\n        postViewModel.getState().setPostSuccess(\"true\");\n        postViewModel.firePropertyChanged();\n        viewManagerModel.setActiveView(postViewModel.getViewName());\n        viewManagerModel.firePropertyChanged();\n\n    }\n\n    @Override\n    public void prepareFailView() {\n        postViewModel.getState().setPostError(\"please post something\");\n        postViewModel.getState().setPostSuccess(\"false\");\n        postViewModel.firePropertyChanged();\n    }\n\n    @Override\n    public void prepareRefreshView(List<postEntity> latestPosts) {\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/postPresenter.java b/src/interface_adapter/postPresenter.java
+--- a/src/interface_adapter/postPresenter.java	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/src/interface_adapter/postPresenter.java	(date 1701294115408)
+@@ -1,4 +1,5 @@
+ package interface_adapter;
++
+ import entities.postEntity;
+ import use_case.post.postOutputBoundary;
+ import use_case.post.postOutputData;
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><project version=\"4\">\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_20\" project-jdk-name=\"corretto-20\" project-jdk-type=\"JavaSDK\">\n    <output url=\"file://$PROJECT_DIR$\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/.idea/misc.xml	(date 1701305053068)
+@@ -1,4 +1,12 @@
+ <project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="MavenProjectsManager">
++    <option name="originalFiles">
++      <list>
++        <option value="$PROJECT_DIR$/untitled/pom.xml" />
++      </list>
++    </option>
++  </component>
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_20" project-jdk-name="corretto-20" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$" />
+   </component>
+Index: src/interface_adapter/post_plaza/PostPlazaState.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter.post_plaza;\n\nimport entities.postEntity;\n\nimport java.util.HashMap;\nimport java.util.Map;\n\npublic class PostPlazaState {\n    private Map<Integer, postEntity> postMap = new HashMap<Integer, postEntity>();\n    private String postPlazaError = null;\n    private Boolean havePost = false;\n\n    public PostPlazaState(PostPlazaState postPlazaState){\n        this.postMap = postPlazaState.postMap;\n        this.havePost = this.updateHavePost();\n    }\n    public PostPlazaState(){}\n    public Boolean updateHavePost(){\n        return havePost = ! this.postMap.isEmpty();\n    }\n    public void setPostMap(Map<Integer, postEntity> newPostMap){\n        this.postMap = newPostMap;\n        this.updateHavePost();\n    }\n    public String getPostPlazaError(){\n        return this.postPlazaError;\n    }\n    public void setPostPlazaError(String error){\n        this.postPlazaError = error;\n    }\n    public Map<Integer, postEntity> getPostMap(){\n        return this.postMap;\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/post_plaza/PostPlazaState.java b/src/interface_adapter/post_plaza/PostPlazaState.java
+--- a/src/interface_adapter/post_plaza/PostPlazaState.java	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/src/interface_adapter/post_plaza/PostPlazaState.java	(date 1701296831977)
+@@ -9,6 +9,7 @@
+     private Map<Integer, postEntity> postMap = new HashMap<Integer, postEntity>();
+     private String postPlazaError = null;
+     private Boolean havePost = false;
++    private String CLOSE_ERROR = "close";
+ 
+     public PostPlazaState(PostPlazaState postPlazaState){
+         this.postMap = postPlazaState.postMap;
+Index: src/interface_adapter/login/LoginPresenter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter.login;\n\nimport interface_adapter.postViewModel;\nimport interface_adapter.postState;\nimport interface_adapter.login.LoginViewModel;\nimport interface_adapter.ViewManagerModel;\nimport use_case.login.LoginOutputBoundary;\nimport use_case.login.LoginOutputData;\n\npublic class LoginPresenter implements LoginOutputBoundary {\n\n    private final ViewManagerModel viewManagerModel;\n\n    public LoginPresenter(ViewManagerModel viewManagerModel,\n                          LoginViewModel loginViewModel) {\n        this.viewManagerModel = viewManagerModel;\n    }\n\n    @Override\n    public void prepareSuccessView(LoginOutputData response) {\n        // On success, switch to the post plaza in view.\n\n        postState loggedInState = postViewModel.getState();\n        loggedInState.setUsername(response.getUsername());;\n        this.viewManagerModel.firePropertyChanged();\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/login/LoginPresenter.java b/src/interface_adapter/login/LoginPresenter.java
+--- a/src/interface_adapter/login/LoginPresenter.java	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/src/interface_adapter/login/LoginPresenter.java	(date 1701290781180)
+@@ -1,8 +1,5 @@
+ package interface_adapter.login;
+ 
+-import interface_adapter.postViewModel;
+-import interface_adapter.postState;
+-import interface_adapter.login.LoginViewModel;
+ import interface_adapter.ViewManagerModel;
+ import use_case.login.LoginOutputBoundary;
+ import use_case.login.LoginOutputData;
+@@ -20,8 +17,7 @@
+     public void prepareSuccessView(LoginOutputData response) {
+         // On success, switch to the post plaza in view.
+ 
+-        postState loggedInState = postViewModel.getState();
+-        loggedInState.setUsername(response.getUsername());;
++
+         this.viewManagerModel.firePropertyChanged();
+     }
+ }
+Index: .idea/jarRepositories.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/jarRepositories.xml b/.idea/jarRepositories.xml
+new file mode 100644
+--- /dev/null	(date 1701302487713)
++++ b/.idea/jarRepositories.xml	(date 1701302487713)
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RemoteRepositoriesConfiguration">
++    <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Central Repository" />
++      <option name="url" value="https://repo.maven.apache.org/maven2" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Maven Central repository" />
++      <option name="url" value="https://repo1.maven.org/maven2" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="jboss.community" />
++      <option name="name" value="JBoss Community repository" />
++      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
++    </remote-repository>
++  </component>
++</project>
+\ No newline at end of file
+Index: src/view/PostPlazaView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package view;\n\nimport entities.postEntity;\nimport interface_adapter.back.BackController;\nimport interface_adapter.comment.CommentController;\nimport interface_adapter.post_plaza.PostPlazaViewModel;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.ActionEvent;\nimport java.awt.event.ActionListener;\nimport java.beans.PropertyChangeEvent;\nimport java.beans.PropertyChangeListener;\nimport java.util.ArrayList;\nimport java.util.Map;\n\npublic class PostPlazaView extends JPanel implements ActionListener, PropertyChangeListener {\n    public final String viewName = \"post plaza\";\n    private final PostPlazaViewModel postPlazaViewModel;\n    private final BackController backController;\n    private final CommentController commentController;\n    private final postView postView;\n    private Dimension size;\n\n    public PostPlazaView(PostPlazaViewModel postPlazaViewModel, BackController backController, CommentController commentController, view.postView postView) {\n        this.postPlazaViewModel = postPlazaViewModel;\n        this.backController = backController;\n        this.commentController = commentController;\n        this.postView = postView;\n        this.postPlazaViewModel.addPropertyChangeListener(this);\n        JLabel title = new JLabel(\"Post Plaza\");\n        title.setAlignmentX(Component.CENTER_ALIGNMENT);\n        this.add(title);\n        Map<Integer, postEntity> postPoolMap = this.postPlazaViewModel.getState().getPostMap();\n        ArrayList<postEntity> postPoolList = new ArrayList<postEntity>( postPoolMap.values());\n        JPanel postsPanel = new JPanel();\n        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));\n        for (postEntity post : postPoolList) {\n            JPanel onePost = this.createPostPanel(post);\n            postsPanel.add(onePost);\n            JPanel oneCommentPlaza = this.createPostCommentPanel(post);\n            postsPanel.add(oneCommentPlaza);\n            postsPanel.add(createButtonsForPost(new Dimension(500, 30)));\n            postsPanel.add(Box.createVerticalStrut(80));\n        }\n        JScrollPane postsScroll = new JScrollPane(postsPanel);\n        postsScroll.getViewport().setPreferredSize(new Dimension(500, 500));\n        this.add(postsScroll);\n        JPanel buttonPanel = this.createButtonsForPlaza(new Dimension(200, 500));\n        this.add(buttonPanel);\n\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e) {\n\n    }\n\n    @Override\n    public void propertyChange(PropertyChangeEvent evt) {\n\n    }\n\n    private JPanel createPostPanel(postEntity post) {\n        String content = (String) post.getPostInfo();\n        int postPanelHeight;\n        if (content.length() > 200){\n            postPanelHeight = 200;\n        } else {\n            postPanelHeight = content.length() * 2;\n        }\n        int postPanelWidth = 500; // Set your desired width\n        JPanel postPanel = new JPanel();\n        postPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);\n        postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));\n//\n        postPanel.setPreferredSize(new Dimension(postPanelWidth, postPanelHeight));\n        postPanel.setMinimumSize(new Dimension(postPanelWidth, postPanelHeight));\n        postPanel.setMaximumSize(new Dimension(postPanelWidth, postPanelHeight));\n\n        Object postInfo = post.getPostInfo();\n        JTextArea contentTextArea = new JTextArea(String.valueOf(postInfo));\n        contentTextArea.setWrapStyleWord(true);\n        contentTextArea.setLineWrap(true);\n        contentTextArea.setEditable(false);\n        contentTextArea.setFont(new Font(contentTextArea.getFont().getFontName(), contentTextArea.getFont().getStyle(), contentTextArea.getFont().getSize() + 5));\n        JScrollPane contentScrollPane = new JScrollPane(contentTextArea);\n        postPanel.add(contentScrollPane);\n        return postPanel;\n    }\n\n\n    private JPanel createPostCommentPanel(postEntity post){\n        JTextArea contentTextArea = new JTextArea(\"-\".repeat(50) + \"below are the comment\\n\");\n        ArrayList<String> commentList = post.getPostComment();\n        int totalWords = 0;\n        for (String i: commentList){\n            totalWords += i.length();\n        }\n        JPanel commentPanel = new JPanel();\n        commentPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);\n        int panelWidth = 500;\n        int panelHeight;\n        if (totalWords > 100 ){\n            panelHeight = 200;\n        }else {\n            panelHeight = totalWords * 3;\n        }\n        commentPanel.setLayout(new BoxLayout(commentPanel, BoxLayout.Y_AXIS));\n        commentPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));\n        commentPanel.setMinimumSize(new Dimension(panelWidth, panelHeight));\n        commentPanel.setMaximumSize(new Dimension(panelWidth, panelHeight));\n        for (String i: commentList){\n            contentTextArea.append(i + \"\\n\" + \"-\".repeat(50));\n        }\n        contentTextArea.setWrapStyleWord(true);\n        contentTextArea.setLineWrap(true);\n        contentTextArea.setEditable(false);\n        JScrollPane scrollComment = new JScrollPane(contentTextArea);\n        scrollComment.setPreferredSize(new Dimension(panelWidth, panelHeight ));\n        scrollComment.setMaximumSize(new Dimension(new Dimension(panelWidth, panelHeight )));\n        scrollComment.setMinimumSize(new Dimension(panelWidth, panelHeight));\n        commentPanel.add(scrollComment);\n        return commentPanel;\n    }\n    private JPanel createButtonsForPost(Dimension dimension){\n        JPanel buttonPanel = new JPanel();\n        buttonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);\n        buttonPanel.setLayout(new FlowLayout());\n        buttonPanel.setPreferredSize(dimension);\n        buttonPanel.setMaximumSize(dimension);\n        buttonPanel.setMinimumSize(dimension);\n        JButton comment = new JButton(postPlazaViewModel.COMMENT_LABEL);\n        comment.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(comment)){\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        buttonPanel.add(comment);\n        JButton like = new JButton(PostPlazaViewModel.LIKE_LABEL);\n        like.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if(evt.getSource().equals(like)){\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        buttonPanel.add(like);\n        return buttonPanel;\n    }\n    public JPanel createButtonsForPlaza(Dimension dimension){\n        JPanel buttonPanel = new JPanel();\n        buttonPanel.setPreferredSize(dimension);\n        buttonPanel.setMaximumSize(dimension);\n        buttonPanel.setMinimumSize(dimension);\n        JButton refresh = new JButton(postPlazaViewModel.PULL_LABEL);\n        JButton newpost = new JButton(postPlazaViewModel.NEW_POST_LABEL);\n        JButton checklikedpost = new JButton(postPlazaViewModel.CHECK_LIKED_POST_LABEL);\n        refresh.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if(evt.getSource().equals(refresh)){\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        newpost.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if(evt.getSource().equals(newpost)){\n                            // TODO: implement back usecase and come back to this\n                            this.showDialog(newpost);\n                        }\n                    }\n                }\n        );\n        checklikedpost.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if(evt.getSource().equals(checklikedpost)){\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        buttonPanel.add(refresh);\n        buttonPanel.add(newpost);\n        buttonPanel.add(Box.createVerticalStrut(50));\n        buttonPanel.add(checklikedpost);\n        return buttonPanel;\n    }\n    private void showDialog(JButton button){\n        JFrame newFrame = new JFrame();\n        newFrame.add(postView);\n\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/view/PostPlazaView.java b/src/view/PostPlazaView.java
+--- a/src/view/PostPlazaView.java	(revision 82531fbc4f29ef9a17dd6b739b6449cbe65d3c43)
++++ b/src/view/PostPlazaView.java	(date 1701296831997)
+@@ -3,12 +3,15 @@
+ import entities.postEntity;
+ import interface_adapter.back.BackController;
+ import interface_adapter.comment.CommentController;
++import interface_adapter.postState;
+ import interface_adapter.post_plaza.PostPlazaViewModel;
+ 
+ import javax.swing.*;
+ import java.awt.*;
+ import java.awt.event.ActionEvent;
+ import java.awt.event.ActionListener;
++import java.awt.event.WindowAdapter;
++import java.awt.event.WindowEvent;
+ import java.beans.PropertyChangeEvent;
+ import java.beans.PropertyChangeListener;
+ import java.util.ArrayList;
+@@ -20,7 +23,11 @@
+     private final BackController backController;
+     private final CommentController commentController;
+     private final postView postView;
++
+     private Dimension size;
++    private JFrame openedJFrame;
++    private boolean haveOpenedJFrame;
++
+ 
+     public PostPlazaView(PostPlazaViewModel postPlazaViewModel, BackController backController, CommentController commentController, view.postView postView) {
+         this.postPlazaViewModel = postPlazaViewModel;
+@@ -32,7 +39,7 @@
+         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+         this.add(title);
+         Map<Integer, postEntity> postPoolMap = this.postPlazaViewModel.getState().getPostMap();
+-        ArrayList<postEntity> postPoolList = new ArrayList<postEntity>( postPoolMap.values());
++        ArrayList<postEntity> postPoolList = new ArrayList<postEntity>(postPoolMap.values());
+         JPanel postsPanel = new JPanel();
+         postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+         for (postEntity post : postPoolList) {
+@@ -58,13 +65,15 @@
+ 
+     @Override
+     public void propertyChange(PropertyChangeEvent evt) {
+-
++        if (evt.getNewValue() instanceof postState){
++            openedJFrame.dispose();
++        }
+     }
+ 
+     private JPanel createPostPanel(postEntity post) {
+         String content = (String) post.getPostInfo();
+         int postPanelHeight;
+-        if (content.length() > 200){
++        if (content.length() > 200) {
+             postPanelHeight = 200;
+         } else {
+             postPanelHeight = content.length() * 2;
+@@ -90,40 +99,41 @@
+     }
+ 
+ 
+-    private JPanel createPostCommentPanel(postEntity post){
++    private JPanel createPostCommentPanel(postEntity post) {
+         JTextArea contentTextArea = new JTextArea("-".repeat(50) + "below are the comment\n");
+         ArrayList<String> commentList = post.getPostComment();
+         int totalWords = 0;
+-        for (String i: commentList){
++        for (String i : commentList) {
+             totalWords += i.length();
+         }
+         JPanel commentPanel = new JPanel();
+         commentPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+         int panelWidth = 500;
+         int panelHeight;
+-        if (totalWords > 100 ){
++        if (totalWords > 100) {
+             panelHeight = 200;
+-        }else {
++        } else {
+             panelHeight = totalWords * 3;
+         }
+         commentPanel.setLayout(new BoxLayout(commentPanel, BoxLayout.Y_AXIS));
+         commentPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
+         commentPanel.setMinimumSize(new Dimension(panelWidth, panelHeight));
+         commentPanel.setMaximumSize(new Dimension(panelWidth, panelHeight));
+-        for (String i: commentList){
++        for (String i : commentList) {
+             contentTextArea.append(i + "\n" + "-".repeat(50));
+         }
+         contentTextArea.setWrapStyleWord(true);
+         contentTextArea.setLineWrap(true);
+         contentTextArea.setEditable(false);
+         JScrollPane scrollComment = new JScrollPane(contentTextArea);
+-        scrollComment.setPreferredSize(new Dimension(panelWidth, panelHeight ));
+-        scrollComment.setMaximumSize(new Dimension(new Dimension(panelWidth, panelHeight )));
++        scrollComment.setPreferredSize(new Dimension(panelWidth, panelHeight));
++        scrollComment.setMaximumSize(new Dimension(new Dimension(panelWidth, panelHeight)));
+         scrollComment.setMinimumSize(new Dimension(panelWidth, panelHeight));
+         commentPanel.add(scrollComment);
+         return commentPanel;
+     }
+-    private JPanel createButtonsForPost(Dimension dimension){
++
++    private JPanel createButtonsForPost(Dimension dimension) {
+         JPanel buttonPanel = new JPanel();
+         buttonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+         buttonPanel.setLayout(new FlowLayout());
+@@ -135,7 +145,7 @@
+                 new ActionListener() {
+                     @Override
+                     public void actionPerformed(ActionEvent evt) {
+-                        if (evt.getSource().equals(comment)){
++                        if (evt.getSource().equals(comment)) {
+                             // TODO: implement back usecase and come back to this
+                             backController.execute();
+                         }
+@@ -148,7 +158,7 @@
+                 new ActionListener() {
+                     @Override
+                     public void actionPerformed(ActionEvent evt) {
+-                        if(evt.getSource().equals(like)){
++                        if (evt.getSource().equals(like)) {
+                             // TODO: implement back usecase and come back to this
+                             backController.execute();
+                         }
+@@ -158,7 +168,8 @@
+         buttonPanel.add(like);
+         return buttonPanel;
+     }
+-    public JPanel createButtonsForPlaza(Dimension dimension){
++
++    public JPanel createButtonsForPlaza(Dimension dimension) {
+         JPanel buttonPanel = new JPanel();
+         buttonPanel.setPreferredSize(dimension);
+         buttonPanel.setMaximumSize(dimension);
+@@ -170,7 +181,7 @@
+                 new ActionListener() {
+                     @Override
+                     public void actionPerformed(ActionEvent evt) {
+-                        if(evt.getSource().equals(refresh)){
++                        if (evt.getSource().equals(refresh)) {
+                             // TODO: implement back usecase and come back to this
+                             backController.execute();
+                         }
+@@ -181,18 +192,21 @@
+                 new ActionListener() {
+                     @Override
+                     public void actionPerformed(ActionEvent evt) {
+-                        if(evt.getSource().equals(newpost)){
++                        if (evt.getSource().equals(newpost)) {
+                             // TODO: implement back usecase and come back to this
+-                            this.showDialog(newpost);
++                            if (!haveOpenedJFrame) {
++                                showDialog(newpost);
++                            }
+                         }
+                     }
+                 }
++
+         );
+         checklikedpost.addActionListener(
+                 new ActionListener() {
+                     @Override
+                     public void actionPerformed(ActionEvent evt) {
+-                        if(evt.getSource().equals(checklikedpost)){
++                        if (evt.getSource().equals(checklikedpost)) {
+                             // TODO: implement back usecase and come back to this
+                             backController.execute();
+                         }
+@@ -205,10 +219,26 @@
+         buttonPanel.add(checklikedpost);
+         return buttonPanel;
+     }
+-    private void showDialog(JButton button){
++
++    private void showDialog(JButton button) {
++        String buttonName = button.getName();
+         JFrame newFrame = new JFrame();
++        newFrame.setLocationRelativeTo(null);
++        newFrame.setSize(new Dimension(800, 600));
+         newFrame.add(postView);
+-
+-
++        openedJFrame = newFrame;
++        haveOpenedJFrame = true;
++        newFrame.setVisible(true);
++        newFrame.addWindowListener(new WindowAdapter() {
++            @Override
++            public void windowClosing(WindowEvent e) {
++                System.out.println("New Frame is closing...");
++                haveOpenedJFrame = false; // Reset the frame reference when it's closed
++            }
++        });
++    }
++    public void closeWindows(){
++        openedJFrame.dispose();
++        haveOpenedJFrame = false;
+     }
+ }
+Index: untitled/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/untitled/pom.xml b/untitled/pom.xml
+new file mode 100644
+--- /dev/null	(date 1701302473119)
++++ b/untitled/pom.xml	(date 1701302473119)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project xmlns="http://maven.apache.org/POM/4.0.0"
++         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++    <modelVersion>4.0.0</modelVersion>
++
++    <groupId>org.example</groupId>
++    <artifactId>untitled</artifactId>
++    <version>1.0-SNAPSHOT</version>
++
++    <properties>
++        <maven.compiler.source>20</maven.compiler.source>
++        <maven.compiler.target>20</maven.compiler.target>
++        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
++    </properties>
++
++</project>
+\ No newline at end of file

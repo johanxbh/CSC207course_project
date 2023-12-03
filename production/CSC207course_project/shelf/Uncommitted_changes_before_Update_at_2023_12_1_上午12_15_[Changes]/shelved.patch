@@ -1,0 +1,39 @@
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ProjectModuleManager\">\n    <modules>\n      <module fileurl=\"file://$PROJECT_DIR$/CSC207course_project.iml\" filepath=\"$PROJECT_DIR$/CSC207course_project.iml\" />\n    </modules>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+--- a/.idea/modules.xml	(revision fcdea42ac0b8a75b8eafebe639497868b40eb417)
++++ b/.idea/modules.xml	(date 1701406735053)
+@@ -3,6 +3,7 @@
+   <component name="ProjectModuleManager">
+     <modules>
+       <module fileurl="file://$PROJECT_DIR$/CSC207course_project.iml" filepath="$PROJECT_DIR$/CSC207course_project.iml" />
++      <module fileurl="file://$PROJECT_DIR$/CSC207course_project_final.iml" filepath="$PROJECT_DIR$/CSC207course_project_final.iml" />
+     </modules>
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"CompilerConfiguration\">\n    <annotationProcessing>\n      <profile default=\"true\" name=\"Default\" enabled=\"true\">\n        <outputRelativeToContentRoot value=\"true\" />\n      </profile>\n    </annotationProcessing>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision fcdea42ac0b8a75b8eafebe639497868b40eb417)
++++ b/.idea/compiler.xml	(date 1701406714337)
+@@ -6,5 +6,8 @@
+         <outputRelativeToContentRoot value="true" />
+       </profile>
+     </annotationProcessing>
++    <bytecodeTargetLevel>
++      <module name="CSC207course_project_final" target="20" />
++    </bytecodeTargetLevel>
+   </component>
+ </project>
+\ No newline at end of file

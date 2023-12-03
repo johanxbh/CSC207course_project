@@ -1,0 +1,397 @@
+Index: src/use_case/post/postInteractor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package use_case.post;\n\nimport entities.postEntity;\nimport interface_adapter.postPresenter;\nimport data_access.postDAO;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class postInteractor implements postInputBoundary{\n    private postOutputBoundary postPresenter;\n    private postDAO dataAccessObj;\n    public postInteractor(postOutputBoundary postPresenter, postDAO dataAccessObj){\n        this.postPresenter = postPresenter;\n        this.dataAccessObj = dataAccessObj;\n    }\n    @Override\n    public void execute(PostinputData data) {\n        if (data.getPostText() == null){\n            postPresenter.prepareFailView();\n        }\n        else{\n            postEntity newPosts = new postEntity(data.getPostText());\n            dataAccessObj.savePost(newPosts);\n            postPresenter.prepareSuccessView(new postOutputData(data.getPostText(), newPosts));\n        }\n    }\n\n    public void refreshPosts() {\n        List<postEntity> latestPosts = dataAccessObj.getLatestPosts();\n        // Here you can format or process the posts as needed before sending to the presenter\n        postPresenter.prepareRefreshView(latestPosts);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/use_case/post/postInteractor.java b/src/use_case/post/postInteractor.java
+--- a/src/use_case/post/postInteractor.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/use_case/post/postInteractor.java	(date 1701451165195)
+@@ -1,9 +1,9 @@
+ package use_case.post;
+ 
+-import entities.postEntity;
+-import interface_adapter.postPresenter;
+ import data_access.postDAO;
+-import java.util.ArrayList;
++import entities.postEntity;
++
++import java.io.IOException;
+ import java.util.List;
+ 
+ public class postInteractor implements postInputBoundary{
+@@ -14,12 +14,12 @@
+         this.dataAccessObj = dataAccessObj;
+     }
+     @Override
+-    public void execute(PostinputData data) {
++    public void execute(PostinputData data) throws IOException {
+         if (data.getPostText() == null){
+             postPresenter.prepareFailView();
+         }
+         else{
+-            postEntity newPosts = new postEntity(data.getPostText());
++            postEntity newPosts = new postEntity(data.getPostText(), null);
+             dataAccessObj.savePost(newPosts);
+             postPresenter.prepareSuccessView(new postOutputData(data.getPostText(), newPosts));
+         }
+Index: src/view/postView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package view;\n\nimport java.awt.image.BufferedImage;\nimport java.beans.PropertyChangeEvent;\nimport java.beans.PropertyChangeListener;\n\nimport interface_adapter.cancel.cancelViewModel;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.ActionEvent;\nimport java.awt.event.ActionListener;\nimport java.awt.event.KeyEvent;\nimport java.awt.event.KeyListener;\nimport java.io.File;\nimport java.io.IOException;\n\nimport interface_adapter.cancel.cancelController;\nimport interface_adapter.post.postController;\nimport interface_adapter.post.postState;\nimport interface_adapter.post.postViewModel;\n\n\n\n\npublic class postView extends JPanel implements PropertyChangeListener, ActionListener {\n    public final String viewName = \"post\";\n    private final JTextArea postTextField = new JTextArea();\n    private final JTextArea postPictureField = new JTextArea();\n    private final interface_adapter.post.postController postController;\n    private final interface_adapter.post.postViewModel postViewModel;\n    private final interface_adapter.cancel.cancelViewModel cancelViewModel;\n    private final JButton post;\n    private final JButton cancel;\n    private final JButton selectPictures;\n    private final cancelController cancelController;\n    private JLabel imageLabel = new JLabel();\n    private String selectedImagePath;\n\n    public postView(postViewModel postViewModel,cancelViewModel cancelViewModel, postController postController, cancelController cancelController) {\n        postTextField.setLineWrap(true);\n        postTextField.setWrapStyleWord(true);\n        postTextField.setEditable(true);\n        postTextField.setPreferredSize(new Dimension(200, 50));\n        //create a JTextArea below\n        this.cancelController = cancelController;\n        this.postController = postController;\n        this.postViewModel = postViewModel;\n        this.cancelViewModel = cancelViewModel;\n        JLabel title = new JLabel(postViewModel.LABLE_TITLE);\n        title.setAlignmentX(Component.CENTER_ALIGNMENT);\n        postViewModel.addPropertyChangeListener(this);\n        cancelViewModel.addPropertyChangeListener(this);\n        JPanel buttons = new JPanel();\n        JPanel centerPanel = new JPanel(new FlowLayout());\n        post = new JButton(postViewModel.POST_BUTTON_LABEL);\n        cancel = new JButton(cancelViewModel.CANCEL_BUTTON_LABEL);\n        selectPictures = new JButton(postViewModel.PICTURE_BUTTON_LABEL);\n        centerPanel.add(post);\n        centerPanel.add(cancel);\n        centerPanel.add(selectPictures);\n        LabelTextPanel textInfo = new LabelTextPanel(new JLabel(postViewModel.POST_BUTTON_LABEL), postTextField);\n        centerPanel.add(textInfo);\n        centerPanel.add(Box.createVerticalStrut(40));\n        add(centerPanel, BorderLayout.CENTER);\n        imageLabel.setPreferredSize(new Dimension(800, 800));\n        centerPanel.add(imageLabel);\n        selectPictures.addActionListener(new ActionListener() {\n            @Override\n            public void actionPerformed(ActionEvent e) {\n                if(e.getSource().equals(selectPictures)){\n                    JFileChooser fileChooser = new JFileChooser();\n                    fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {\n                        @Override\n                        public boolean accept(java.io.File f) {\n                            return f.getName().toLowerCase().endsWith(\".png\")\n                                    || f.getName().toLowerCase().endsWith(\".jpg\")\n                                    || f.getName().toLowerCase().endsWith(\".jpeg\")\n                                    || f.getName().toLowerCase().endsWith(\".gif\")\n                                    || f.isDirectory();\n                        }\n\n                        @Override\n                        public String getDescription() {\n                            return \"Image Files\";\n                        }\n                    });\n\n                    int result = fileChooser.showOpenDialog(postView.this);\n                    if (result == JFileChooser.APPROVE_OPTION) {\n                        selectedImagePath = fileChooser.getSelectedFile().getAbsolutePath();\n                        postPictureField.setText(selectedImagePath);\n                        displayImage(selectedImagePath);\n                    }\n\n                }\n            }\n        });\n        cancel.addActionListener(\n                new ActionListener() {\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(cancel)) {\n                            cancelController.execute();\n                        }\n                    }\n                }\n        );\n\n        post.addActionListener(\n                new ActionListener() {\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(post)) {\n                            postState currentState = postViewModel.getState();\n                            System.out.println(\"begin\" + currentState.getPostPictureText());\n                            postController.execute(currentState.getPostInputText(), selectedImagePath);\n                        }\n                    }\n                }\n        );\n        //read path from postPictureField\n        postPictureField.addKeyListener(\n                new KeyListener() {\n                    @Override\n                    public void keyTyped(KeyEvent e) {\n                        postState currentState = postViewModel.getState();\n                        String text = postPictureField.getText() + e.getKeyChar();\n                        currentState.setPostPictureText(text);\n                        postViewModel.setPostState(currentState);\n                    }\n\n                    @Override\n                    public void keyPressed(KeyEvent e) {\n                    }\n\n                    @Override\n                    public void keyReleased(KeyEvent e) {\n                    }\n                });\n        postTextField.addKeyListener(\n                new KeyListener() {\n                    @Override\n                    public void keyTyped(KeyEvent e) {\n                        postState currentState = postViewModel.getState();\n                        String text = postTextField.getText() + e.getKeyChar();\n                        currentState.setPostInputText(text);\n                        postViewModel.setPostState(currentState);\n                    }\n\n                    @Override\n                    public void keyPressed(KeyEvent e) {\n                    }\n\n                    @Override\n                    public void keyReleased(KeyEvent e) {\n\n                    }\n                });\n    }\n    @Override\n    public void propertyChange(PropertyChangeEvent evt) {\n\n        if (evt.getPropertyName().equals(postViewModel.POST_BUTTON_LABEL)) {\n            postState state = postViewModel.getState();\n            if (state.getPostSuccess().equals(\"false\")) {\n                JOptionPane.showMessageDialog(this, state.getPostError());\n            }\n            else {\n                JOptionPane.showMessageDialog(this, \"successfully posted:\" + state.getPostText() + \";\" + state.getPostPictureText());\n                SwingUtilities.getWindowAncestor(this).dispose();\n                SwingUtilities.invokeLater(() -> {\n                    JFrame frame = new JFrame(\"Image Display\");\n                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\n                    JLabel imageLabel = new JLabel();\n                    ImageIcon imageIcon = null;\n                    try {\n                        BufferedImage image = javax.imageio.ImageIO.read(new File(state.getPostPictureText()));\n                        imageIcon = new ImageIcon(image);\n                    } catch (IOException e) {\n                        e.printStackTrace();\n                    }\n                    imageLabel.setIcon(imageIcon);\n\n                    frame.getContentPane().add(imageLabel);\n\n                    frame.setSize(1200, 1200);\n                    frame.setLocationRelativeTo(null);\n                    frame.setVisible(true);\n                });\n\n            }\n        }\n        else{\n            JOptionPane.showMessageDialog(this,\"cancel successfully\");\n            postTextField.setText(\"\");\n            postPictureField.setText(\"\");\n        }\n\n    }\n    @Override\n    public void actionPerformed(ActionEvent e) {\n\n    }\n    private void displayImage(String imagePath) {\n        try {\n            BufferedImage image = javax.imageio.ImageIO.read(new File(imagePath));\n            ImageIcon imageIcon = new ImageIcon(image);\n            imageLabel.setIcon(imageIcon);\n        } catch (IOException ex) {\n            ex.printStackTrace();\n        }\n}}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/view/postView.java b/src/view/postView.java
+--- a/src/view/postView.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/view/postView.java	(date 1701451165207)
+@@ -16,9 +16,7 @@
+ import java.io.IOException;
+ 
+ import interface_adapter.cancel.cancelController;
+-import interface_adapter.post.postController;
+-import interface_adapter.post.postState;
+-import interface_adapter.post.postViewModel;
++import interface_adapter.post.*;
+ 
+ 
+ 
+@@ -27,8 +25,8 @@
+     public final String viewName = "post";
+     private final JTextArea postTextField = new JTextArea();
+     private final JTextArea postPictureField = new JTextArea();
+-    private final interface_adapter.post.postController postController;
+-    private final interface_adapter.post.postViewModel postViewModel;
++    private final postController postController;
++    private final postViewModel postViewModel;
+     private final interface_adapter.cancel.cancelViewModel cancelViewModel;
+     private final JButton post;
+     private final JButton cancel;
+Index: src/app/postViewFactory.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package app;\nimport interface_adapter.*;\nimport interface_adapter.cancel.cancelController;\nimport interface_adapter.cancel.cancelViewModel;\nimport view.postView;\nimport data_access.postDAO;\nimport use_case.post.postInteractor;\nimport use_case.post.postInputBoundary;\nimport interface_adapter.cancel.cancelPresenter;\nimport use_case.cancel.cancelInteractor;\npublic class postViewFactory {\n    private postViewFactory(){}\n    public static postView create(ViewManagerModel viewManagerModel, postDAO postDataAccessObj, postViewModel postViewModel, cancelViewModel cancelViewModel){\n        postController postController = createPostController(viewManagerModel,postViewModel, postDataAccessObj);\n        cancelPresenter cancelPresenter = new cancelPresenter(cancelViewModel);\n        cancelInteractor cancelInteractor = new cancelInteractor(cancelPresenter);\n        return new postView(postViewModel, cancelViewModel, postController, new cancelController(cancelInteractor));\n    }\n    public static postController createPostController(ViewManagerModel viewManagerModel, postViewModel postViewModel, postDAO postDataAccessObj){\n        postPresenter postPresenter = new postPresenter(postViewModel, viewManagerModel);\n        postInputBoundary postInteractor = new postInteractor(postPresenter,postDataAccessObj);\n        return new postController(postInteractor);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/postViewFactory.java b/src/app/postViewFactory.java
+--- a/src/app/postViewFactory.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/app/postViewFactory.java	(date 1701451165215)
+@@ -1,13 +1,17 @@
+ package app;
+-import interface_adapter.*;
+-import interface_adapter.cancel.cancelController;
+-import interface_adapter.cancel.cancelViewModel;
+-import view.postView;
++
+ import data_access.postDAO;
+-import use_case.post.postInteractor;
+-import use_case.post.postInputBoundary;
++import interface_adapter.ViewManagerModel;
++import interface_adapter.cancel.cancelController;
+ import interface_adapter.cancel.cancelPresenter;
++import interface_adapter.cancel.cancelViewModel;
++import interface_adapter.post.postController;
++import interface_adapter.post.postPresenter;
++import interface_adapter.post.postViewModel;
+ import use_case.cancel.cancelInteractor;
++import use_case.post.postInputBoundary;
++import use_case.post.postInteractor;
++import view.postView;
+ public class postViewFactory {
+     private postViewFactory(){}
+     public static postView create(ViewManagerModel viewManagerModel, postDAO postDataAccessObj, postViewModel postViewModel, cancelViewModel cancelViewModel){
+Index: src/app/MainTestForPostDAO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package app;public class MainTestForPostDAO {\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/MainTestForPostDAO.java b/src/app/MainTestForPostDAO.java
+--- a/src/app/MainTestForPostDAO.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/app/MainTestForPostDAO.java	(date 1701451165223)
+@@ -1,2 +1,14 @@
+-package app;public class MainTestForPostDAO {
++package app;
++
++import data_access.postDataAccessObject;
++
++import java.io.IOException;
++
++public class MainTestForPostDAO {
++    public MainTestForPostDAO() throws IOException {
++    }
++    public static void main(String[] args) throws IOException {
++        postDataAccessObject postDataAccessObject = new postDataAccessObject("sl.Bq6fryy6dUNfsar1WOTPvRWd_obpzPhoJGspeNlzLJ1fFcd3ByJmPhQiLK");
++
++    }
+ }
+Index: src/app/MainTestForPostPlaza.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package app;\n\nimport data_access.FilePostAccessObject;\nimport data_access.InMemoryDataAccessObject;\nimport data_access.postDAO;\nimport entities.postEntity;\nimport interface_adapter.ViewManagerModel;\nimport interface_adapter.back.BackController;\nimport interface_adapter.comment.CommentController;\nimport interface_adapter.comment.CommentPresenter;\nimport interface_adapter.comment.CommentViewModel;\nimport interface_adapter.list_liked_post.ListLikedPostController;\nimport interface_adapter.postViewModel;\nimport interface_adapter.post_plaza.PostPlazaState;\nimport interface_adapter.post_plaza.PostPlazaViewModel;\nimport use_case.comment.CommentInputBoundary;\nimport use_case.comment.CommentInteracter;\nimport use_case.comment.CommentOutputBoundary;\nimport use_case.list_liked_post.ListLikedPostInputBoundary;\nimport use_case.list_liked_post.ListLikedPostInteractor;\nimport view.PostPlazaView;\nimport view.ViewManager;\nimport view.postView;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.Iterator;\n\npublic class MainTestForPostPlaza {\n    public static void main(String[] args){\n        JFrame application = new JFrame(\"PostPlaza\");\n        application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);\n        CardLayout cardLayout = new CardLayout();\n\n        JPanel views = new JPanel(cardLayout);\n        application.add(views);\n        ViewManagerModel viewManagerModel = new ViewManagerModel();\n        new ViewManager(views, cardLayout, viewManagerModel);\n        PostPlazaViewModel postPlazaViewModel = new PostPlazaViewModel();\n        ArrayList<postEntity> listOfpostEntites = new ArrayList<postEntity>();\n        for (int i = 0; i <= 100; i++ ){\n            postEntity onePost = new postEntity(\"this is a post for test\" + String.valueOf(i));\n            onePost.updatePostComment(\"this is a test for comment\" + String.valueOf(i));\n            listOfpostEntites.add(onePost);\n        }\n        for (int i = 0; i <= 100; i++){\n            postEntity onePost = new postEntity(\"this is a extra l\" + \"o\".repeat(500)+ \"ng post\");\n            listOfpostEntites.add(onePost);\n        }\n        for (int i = 0; i <= 100; i++){\n            postEntity onePost = new postEntity(\"this is a extra l\" + \"o\".repeat(1000)+ \"ng post\");\n            listOfpostEntites.add(onePost);\n        }\n        Iterator<postEntity> iter  =  listOfpostEntites.iterator();\n        HashMap<Integer, postEntity> testHashMap = new HashMap<Integer, postEntity>();\n        for (int i = 0; i <= 300; i++){\n            postEntity onePost = iter.next();\n            testHashMap.put(i, onePost);\n        }\n        PostPlazaState postPlazaState = new PostPlazaState();\n        postPlazaState.setPostMap(testHashMap);\n        postPlazaViewModel.setState(postPlazaState);\n        postPlazaViewModel.firePropertyChanged();\n        viewManagerModel.setActiveView(postPlazaViewModel.getViewName());\n        viewManagerModel.firePropertyChanged();\n\n\n\n\n        ListLikedPostInputBoundary fakeinteractor = new ListLikedPostInteractor();\n        ListLikedPostController fakecontroller = new ListLikedPostController(fakeinteractor);\n        BackController fakebackcontroller = new BackController();\n\n        CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(new CommentViewModel(\"comment\"));\n        CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());\n        postViewModel postViewModel = new postViewModel();\n        postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();\n\n\n        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel);\n        PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);\n\n\n\n        views.add(postPlazaView, postPlazaView.viewName);\n        viewManagerModel.setActiveView(postPlazaView.viewName);\n        viewManagerModel.firePropertyChanged();\n        application.pack();\n        application.setVisible(true);\n\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/app/MainTestForPostPlaza.java b/src/app/MainTestForPostPlaza.java
+--- a/src/app/MainTestForPostPlaza.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/app/MainTestForPostPlaza.java	(date 1701451165231)
+@@ -6,11 +6,12 @@
+ import entities.postEntity;
+ import interface_adapter.ViewManagerModel;
+ import interface_adapter.back.BackController;
++import interface_adapter.cancel.cancelViewModel;
+ import interface_adapter.comment.CommentController;
+ import interface_adapter.comment.CommentPresenter;
+ import interface_adapter.comment.CommentViewModel;
+ import interface_adapter.list_liked_post.ListLikedPostController;
+-import interface_adapter.postViewModel;
++import interface_adapter.post.postViewModel;
+ import interface_adapter.post_plaza.PostPlazaState;
+ import interface_adapter.post_plaza.PostPlazaViewModel;
+ import use_case.comment.CommentInputBoundary;
+@@ -41,16 +42,16 @@
+         PostPlazaViewModel postPlazaViewModel = new PostPlazaViewModel();
+         ArrayList<postEntity> listOfpostEntites = new ArrayList<postEntity>();
+         for (int i = 0; i <= 100; i++ ){
+-            postEntity onePost = new postEntity("this is a post for test" + String.valueOf(i));
++            postEntity onePost = new postEntity("this is a post for test" + String.valueOf(i), null);
+             onePost.updatePostComment("this is a test for comment" + String.valueOf(i));
+             listOfpostEntites.add(onePost);
+         }
+         for (int i = 0; i <= 100; i++){
+-            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(500)+ "ng post");
++            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(500)+ "ng post", null);
+             listOfpostEntites.add(onePost);
+         }
+         for (int i = 0; i <= 100; i++){
+-            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(1000)+ "ng post");
++            postEntity onePost = new postEntity("this is a extra l" + "o".repeat(1000)+ "ng post", null);
+             listOfpostEntites.add(onePost);
+         }
+         Iterator<postEntity> iter  =  listOfpostEntites.iterator();
+@@ -77,9 +78,9 @@
+         CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());
+         postViewModel postViewModel = new postViewModel();
+         postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();
++        cancelViewModel cancelViewModel = new cancelViewModel();
+ 
+-
+-        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel);
++        postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject, postViewModel, cancelViewModel);
+         PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);
+ 
+ 
+Index: src/interface_adapter/post/postPresenter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter;\n\nimport entities.postEntity;\nimport use_case.post.postOutputBoundary;\nimport use_case.post.postOutputData;\n\nimport java.util.List;\n\npublic class postPresenter implements postOutputBoundary{\n    private postViewModel postViewModel;\n    private ViewManagerModel viewManagerModel;\n    public postPresenter(postViewModel postViewModel, ViewManagerModel viewManagerModel){\n        this.postViewModel = postViewModel;\n        this.viewManagerModel = viewManagerModel;\n    }\n    @Override\n    public void prepareSuccessView(postOutputData data) {\n        postViewModel.getState().setPostText(data.getValue());\n        postViewModel.getState().setPostSuccess(\"true\");\n        postViewModel.firePropertyChanged();\n        viewManagerModel.setActiveView(postViewModel.getViewName());\n        viewManagerModel.firePropertyChanged();\n\n    }\n\n    @Override\n    public void prepareFailView() {\n        postViewModel.getState().setPostError(\"please post something\");\n        postViewModel.getState().setPostSuccess(\"false\");\n        postViewModel.firePropertyChanged();\n    }\n\n    @Override\n    public void prepareRefreshView(List<postEntity> latestPosts) {\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/post/postPresenter.java b/src/interface_adapter/post/postPresenter.java
+--- a/src/interface_adapter/post/postPresenter.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/interface_adapter/post/postPresenter.java	(date 1701451165235)
+@@ -1,6 +1,7 @@
+-package interface_adapter;
++package interface_adapter.post;
+ 
+ import entities.postEntity;
++import interface_adapter.ViewManagerModel;
+ import use_case.post.postOutputBoundary;
+ import use_case.post.postOutputData;
+ 
+Index: src/interface_adapter/post/postController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter;\nimport use_case.post.postInputBoundary;\nimport use_case.post.postInteractor;\nimport use_case.post.postOutputBoundary;\nimport data_access.postDAO;\nimport use_case.post.PostinputData;\npublic class postController {\n    private postInputBoundary postInteractor;\n    public postController(postInputBoundary postInteractor){\n        this.postInteractor = postInteractor;\n    }\n    public void execute(String textInformation){\n        postInteractor.execute(new PostinputData(textInformation));\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/post/postController.java b/src/interface_adapter/post/postController.java
+--- a/src/interface_adapter/post/postController.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/interface_adapter/post/postController.java	(date 1701451165243)
+@@ -1,9 +1,7 @@
+-package interface_adapter;
+-import use_case.post.postInputBoundary;
+-import use_case.post.postInteractor;
+-import use_case.post.postOutputBoundary;
+-import data_access.postDAO;
++package interface_adapter.post;
++
+ import use_case.post.PostinputData;
++import use_case.post.postInputBoundary;
+ public class postController {
+     private postInputBoundary postInteractor;
+     public postController(postInputBoundary postInteractor){
+Index: src/view/PostPlazaView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package view;\n\nimport entities.postEntity;\nimport interface_adapter.back.BackController;\nimport interface_adapter.comment.CommentController;\nimport interface_adapter.postState;\nimport interface_adapter.post_plaza.PostPlazaViewModel;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.awt.event.ActionEvent;\nimport java.awt.event.ActionListener;\nimport java.awt.event.WindowAdapter;\nimport java.awt.event.WindowEvent;\nimport java.beans.PropertyChangeEvent;\nimport java.beans.PropertyChangeListener;\nimport java.util.ArrayList;\nimport java.util.Map;\n\npublic class PostPlazaView extends JPanel implements ActionListener, PropertyChangeListener {\n    public final String viewName = \"post plaza\";\n    private final PostPlazaViewModel postPlazaViewModel;\n    private final BackController backController;\n    private final CommentController commentController;\n    private final postView postView;\n\n    private Dimension size;\n    private JFrame openedJFrame;\n    private boolean haveOpenedJFrame;\n\n\n    public PostPlazaView(PostPlazaViewModel postPlazaViewModel, BackController backController, CommentController commentController, view.postView postView) {\n        this.postPlazaViewModel = postPlazaViewModel;\n        this.backController = backController;\n        this.commentController = commentController;\n        this.postView = postView;\n        this.postPlazaViewModel.addPropertyChangeListener(this);\n        JLabel title = new JLabel(\"Post Plaza\");\n        title.setAlignmentX(Component.CENTER_ALIGNMENT);\n        this.add(title);\n        Map<Integer, postEntity> postPoolMap = this.postPlazaViewModel.getState().getPostMap();\n        ArrayList<postEntity> postPoolList = new ArrayList<postEntity>(postPoolMap.values());\n        JPanel postsPanel = new JPanel();\n        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));\n        for (postEntity post : postPoolList) {\n            JPanel onePost = this.createPostPanel(post);\n            postsPanel.add(onePost);\n            JPanel oneCommentPlaza = this.createPostCommentPanel(post);\n            postsPanel.add(oneCommentPlaza);\n            postsPanel.add(createButtonsForPost(new Dimension(500, 30)));\n            postsPanel.add(Box.createVerticalStrut(80));\n        }\n        JScrollPane postsScroll = new JScrollPane(postsPanel);\n        postsScroll.getViewport().setPreferredSize(new Dimension(500, 500));\n        this.add(postsScroll);\n        JPanel buttonPanel = this.createButtonsForPlaza(new Dimension(200, 500));\n        this.add(buttonPanel);\n\n    }\n\n    @Override\n    public void actionPerformed(ActionEvent e) {\n\n    }\n\n    @Override\n    public void propertyChange(PropertyChangeEvent evt) {\n        if (evt.getNewValue() instanceof postState){\n            openedJFrame.dispose();\n        }\n    }\n\n    private JPanel createPostPanel(postEntity post) {\n        String content = (String) post.getPostInfo();\n        int postPanelHeight;\n        if (content.length() > 200) {\n            postPanelHeight = 200;\n        } else {\n            postPanelHeight = content.length() * 2;\n        }\n        int postPanelWidth = 500; // Set your desired width\n        JPanel postPanel = new JPanel();\n        postPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);\n        postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));\n//\n        postPanel.setPreferredSize(new Dimension(postPanelWidth, postPanelHeight));\n        postPanel.setMinimumSize(new Dimension(postPanelWidth, postPanelHeight));\n        postPanel.setMaximumSize(new Dimension(postPanelWidth, postPanelHeight));\n\n        Object postInfo = post.getPostInfo();\n        JTextArea contentTextArea = new JTextArea(String.valueOf(postInfo));\n        contentTextArea.setWrapStyleWord(true);\n        contentTextArea.setLineWrap(true);\n        contentTextArea.setEditable(false);\n        contentTextArea.setFont(new Font(contentTextArea.getFont().getFontName(), contentTextArea.getFont().getStyle(), contentTextArea.getFont().getSize() + 5));\n        JScrollPane contentScrollPane = new JScrollPane(contentTextArea);\n        postPanel.add(contentScrollPane);\n        return postPanel;\n    }\n\n\n    private JPanel createPostCommentPanel(postEntity post) {\n        JTextArea contentTextArea = new JTextArea(\"-\".repeat(50) + \"below are the comment\\n\");\n        ArrayList<String> commentList = post.getPostComment();\n        int totalWords = 0;\n        for (String i : commentList) {\n            totalWords += i.length();\n        }\n        JPanel commentPanel = new JPanel();\n        commentPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);\n        int panelWidth = 500;\n        int panelHeight;\n        if (totalWords > 100) {\n            panelHeight = 200;\n        } else {\n            panelHeight = totalWords * 3;\n        }\n        commentPanel.setLayout(new BoxLayout(commentPanel, BoxLayout.Y_AXIS));\n        commentPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));\n        commentPanel.setMinimumSize(new Dimension(panelWidth, panelHeight));\n        commentPanel.setMaximumSize(new Dimension(panelWidth, panelHeight));\n        for (String i : commentList) {\n            contentTextArea.append(i + \"\\n\" + \"-\".repeat(50));\n        }\n        contentTextArea.setWrapStyleWord(true);\n        contentTextArea.setLineWrap(true);\n        contentTextArea.setEditable(false);\n        JScrollPane scrollComment = new JScrollPane(contentTextArea);\n        scrollComment.setPreferredSize(new Dimension(panelWidth, panelHeight));\n        scrollComment.setMaximumSize(new Dimension(new Dimension(panelWidth, panelHeight)));\n        scrollComment.setMinimumSize(new Dimension(panelWidth, panelHeight));\n        commentPanel.add(scrollComment);\n        return commentPanel;\n    }\n\n    private JPanel createButtonsForPost(Dimension dimension) {\n        JPanel buttonPanel = new JPanel();\n        buttonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);\n        buttonPanel.setLayout(new FlowLayout());\n        buttonPanel.setPreferredSize(dimension);\n        buttonPanel.setMaximumSize(dimension);\n        buttonPanel.setMinimumSize(dimension);\n        JButton comment = new JButton(postPlazaViewModel.COMMENT_LABEL);\n        comment.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(comment)) {\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        buttonPanel.add(comment);\n        JButton like = new JButton(PostPlazaViewModel.LIKE_LABEL);\n        like.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(like)) {\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        buttonPanel.add(like);\n        return buttonPanel;\n    }\n\n    public JPanel createButtonsForPlaza(Dimension dimension) {\n        JPanel buttonPanel = new JPanel();\n        buttonPanel.setPreferredSize(dimension);\n        buttonPanel.setMaximumSize(dimension);\n        buttonPanel.setMinimumSize(dimension);\n        JButton refresh = new JButton(postPlazaViewModel.PULL_LABEL);\n        JButton newpost = new JButton(postPlazaViewModel.NEW_POST_LABEL);\n        JButton checklikedpost = new JButton(postPlazaViewModel.CHECK_LIKED_POST_LABEL);\n        refresh.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(refresh)) {\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        newpost.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(newpost)) {\n                            // TODO: implement back usecase and come back to this\n                            if (!haveOpenedJFrame) {\n                                showDialog(newpost);\n                            }\n\n                        }\n                    }\n                }\n\n        );\n        checklikedpost.addActionListener(\n                new ActionListener() {\n                    @Override\n                    public void actionPerformed(ActionEvent evt) {\n                        if (evt.getSource().equals(checklikedpost)) {\n                            // TODO: implement back usecase and come back to this\n                            backController.execute();\n                        }\n                    }\n                }\n        );\n        buttonPanel.add(refresh);\n        buttonPanel.add(newpost);\n        buttonPanel.add(Box.createVerticalStrut(50));\n        buttonPanel.add(checklikedpost);\n        return buttonPanel;\n    }\n\n\n    private void showDialog(JButton button) {\n        String buttonName = button.getName();\n        JFrame newFrame = new JFrame();\n        newFrame.setLocationRelativeTo(null);\n        newFrame.setSize(new Dimension(800, 600));\n        newFrame.add(postView);\n        openedJFrame = newFrame;\n        haveOpenedJFrame = true;\n        newFrame.setVisible(true);\n        newFrame.addWindowListener(new WindowAdapter() {\n            @Override\n            public void windowClosing(WindowEvent e) {\n                System.out.println(\"New Frame is closing...\");\n                haveOpenedJFrame = false; // Reset the frame reference when it's closed\n            }\n        });\n    }\n    public void closeWindows(){\n        openedJFrame.dispose();\n        haveOpenedJFrame = false;\n\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/view/PostPlazaView.java b/src/view/PostPlazaView.java
+--- a/src/view/PostPlazaView.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/view/PostPlazaView.java	(date 1701451165251)
+@@ -3,7 +3,7 @@
+ import entities.postEntity;
+ import interface_adapter.back.BackController;
+ import interface_adapter.comment.CommentController;
+-import interface_adapter.postState;
++import interface_adapter.post.postState;
+ import interface_adapter.post_plaza.PostPlazaViewModel;
+ 
+ import javax.swing.*;
+Index: src/interface_adapter/post/postViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter;\n\nimport java.beans.PropertyChangeListener;\nimport java.beans.PropertyChangeSupport;\n\npublic class postViewModel extends ViewModel {\n    public static final String POST_BUTTON_LABEL = \"post\";\n    public static final String LABLE_TITLE = \"postview\";\n    private postState postState = new postState();\n    private final PropertyChangeSupport support = new PropertyChangeSupport(this);\n    public postViewModel() {\n        super(\"post\");\n    }\n\n    @Override\n    public void firePropertyChanged() {\n        support.firePropertyChange(\"post\", null, this.postState);\n    }\n\n    @Override\n    public void addPropertyChangeListener(PropertyChangeListener listener) {\n        support.addPropertyChangeListener(listener);\n    }\n    public postState getState(){\n        return postState;\n    }\n    public void setPostState(postState state){\n        this.postState = state;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/post/postViewModel.java b/src/interface_adapter/post/postViewModel.java
+--- a/src/interface_adapter/post/postViewModel.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/interface_adapter/post/postViewModel.java	(date 1701451165255)
+@@ -1,4 +1,6 @@
+-package interface_adapter;
++package interface_adapter.post;
++
++import interface_adapter.ViewModel;
+ 
+ import java.beans.PropertyChangeListener;
+ import java.beans.PropertyChangeSupport;
+Index: src/use_case/post/postInputBoundary.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package use_case.post;\n\npublic interface postInputBoundary {\n    void execute(PostinputData data);\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/use_case/post/postInputBoundary.java b/src/use_case/post/postInputBoundary.java
+--- a/src/use_case/post/postInputBoundary.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/use_case/post/postInputBoundary.java	(date 1701451165263)
+@@ -1,5 +1,7 @@
+ package use_case.post;
+ 
++import java.io.IOException;
++
+ public interface postInputBoundary {
+-    void execute(PostinputData data);
++    void execute(PostinputData data) throws IOException;
+ }
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"Encoding\">\n    <file url=\"file://$PROJECT_DIR$/untitled/src/main/java\" charset=\"UTF-8\" />\n    <file url=\"file://$PROJECT_DIR$/untitled/src/main/resources\" charset=\"UTF-8\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+--- a/.idea/encodings.xml	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/.idea/encodings.xml	(date 1701451165271)
+@@ -1,7 +1,8 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="Encoding">
+-    <file url="file://$PROJECT_DIR$/untitled/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
++    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+     <file url="file://$PROJECT_DIR$/untitled/src/main/resources" charset="UTF-8" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: src/data_access/postDAO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package data_access;\nimport entities.postEntity;\n\nimport java.io.IOException;\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic interface postDAO {\n    public postEntity getMostRecentPost() throws IOException;\n    public void savePost(postEntity post);\n    public void cleanAllPost();\n    public postEntity getMostPopularPost();\n    public postEntity getPost(Integer postid);\n    public List<postEntity> getLatestPosts();\n\n    postEntity getlatestPost(List<postEntity> posts);\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/data_access/postDAO.java b/src/data_access/postDAO.java
+--- a/src/data_access/postDAO.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/data_access/postDAO.java	(date 1701451165275)
+@@ -7,7 +7,7 @@
+ 
+ public interface postDAO {
+     public postEntity getMostRecentPost() throws IOException;
+-    public void savePost(postEntity post);
++    public void savePost(postEntity post) throws IOException;
+     public void cleanAllPost();
+     public postEntity getMostPopularPost();
+     public postEntity getPost(Integer postid);
+Index: src/entities/postEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package entities;\n\nimport java.util.ArrayList;\n\n    public class postEntity {\n    private String postPicture;\n    private String posttext;\n    private ArrayList<String> postComment;\n    private Integer postLiked;\n    private static Integer countpostID = 0;\n    private Integer postID;\n    public postEntity(String posttext, String postPicture){\n        this.postPicture = postPicture;\n        this.posttext = posttext;\n        postLiked = 0;\n        postComment = new ArrayList<String>();\n        countpostID ++;\n        postID = countpostID;\n    }\n    public void updatePostComment(String newComment){\n            postComment.add(newComment);\n        }\n    public void setPostLiked(Integer integer){\n            postLiked = integer;\n        }\n    public Integer getPostLiked() {\n            return postLiked;\n        }\n    public String getPosttext() {\n            return posttext;\n        }\n    public ArrayList<String> getPostComment() {\n            return postComment;\n        }\n    public Integer getId(){\n        return this.postID;\n    }\n    public String getPostPicture(){\n        return postPicture;\n    }\n    }\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/entities/postEntity.java b/src/entities/postEntity.java
+--- a/src/entities/postEntity.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/entities/postEntity.java	(date 1701451165283)
+@@ -17,6 +17,9 @@
+         countpostID ++;
+         postID = countpostID;
+     }
++    public String getPostInfo(){
++        return this.posttext;
++    }
+     public void updatePostComment(String newComment){
+             postComment.add(newComment);
+         }
+@@ -38,6 +41,12 @@
+     public String getPostPicture(){
+         return postPicture;
+     }
++    public void setPostID(Integer postID) {
++        this.postID = postID;
++    }
++    public void setPothPicture(String newPostPicture){
++        this.postPicture = newPostPicture;
++    }
+     }
+ 
+ 
+Index: src/interface_adapter/post/postState.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter;\n\npublic class postState {\n    private String postText;\n    private String postError;\n    private String postSuccess;\n    private String postInputText;\n    public postState(){\n    }\n    public String getPostText(){\n        return postText;\n    }\n    public postState(postState copy){\n        this.postText = copy.getPostText();\n    }\n    public void setPostText(String newPostText){\n        this.postText = newPostText;\n    }\n\n    public void setPostError(String postError) {\n        this.postError = postError;\n    }\n\n    public String getPostError() {\n        return postError;\n    }\n    public String getPostSuccess(){\n        return postSuccess;\n    }\n    public void setPostSuccess(String c){\n        postSuccess = c;\n    }\n\n    public String getPostInputText() {\n        return postInputText;\n    }\n    public void setPostInputText(String text){\n        postInputText = text;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/post/postState.java b/src/interface_adapter/post/postState.java
+--- a/src/interface_adapter/post/postState.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/interface_adapter/post/postState.java	(date 1701451165291)
+@@ -1,4 +1,4 @@
+-package interface_adapter;
++package interface_adapter.post;
+ 
+ public class postState {
+     private String postText;
+Index: src/interface_adapter/login/LoginPresenter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package interface_adapter.login;\n\nimport interface_adapter.ViewManagerModel;\nimport use_case.login.LoginOutputBoundary;\nimport use_case.login.LoginOutputData;\n\npublic class LoginPresenter implements LoginOutputBoundary {\n\n    private final ViewManagerModel viewManagerModel;\n\n    public LoginPresenter(ViewManagerModel viewManagerModel,\n                          LoginViewModel loginViewModel) {\n        this.viewManagerModel = viewManagerModel;\n    }\n\n    @Override\n    public void prepareSuccessView(LoginOutputData response) {\n        // On success, switch to the post plaza in view.\n<<<<<<< HEAD\n\n\n        this.viewManagerModel.firePropertyChanged();\n=======\n        viewManagerModel.setActiveView(\"postPlaza\");\n        viewManagerModel.firePropertyChanged();\n>>>>>>> main\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/interface_adapter/login/LoginPresenter.java b/src/interface_adapter/login/LoginPresenter.java
+--- a/src/interface_adapter/login/LoginPresenter.java	(revision 21c01842dc12abd0ef74141067d3d8290b1ecb75)
++++ b/src/interface_adapter/login/LoginPresenter.java	(date 1701451165295)
+@@ -16,13 +16,7 @@
+     @Override
+     public void prepareSuccessView(LoginOutputData response) {
+         // On success, switch to the post plaza in view.
+-<<<<<<< HEAD
+-
+-
+-        this.viewManagerModel.firePropertyChanged();
+-=======
+         viewManagerModel.setActiveView("postPlaza");
+         viewManagerModel.firePropertyChanged();
+->>>>>>> main
+     }
+ }
