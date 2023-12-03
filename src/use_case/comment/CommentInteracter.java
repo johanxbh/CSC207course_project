@@ -1,20 +1,25 @@
 package use_case.comment;
 
+import entities.postEntity;
+
 public class CommentInteracter implements CommentInputBoundary{
 
     private CommentOutputBoundary commentOutputBoundary;
 
-    private CommentUserDataAccessInterface commentUserDataAccessInterface;
 
-    public CommentInteracter(CommentOutputBoundary commentOutputBoundary, CommentUserDataAccessInterface commentUserDataAccessInterface) {
+    public CommentInteracter(CommentOutputBoundary commentOutputBoundary) {
         this.commentOutputBoundary = commentOutputBoundary;
-        this.commentUserDataAccessInterface = commentUserDataAccessInterface;
     }
 
     @Override
     public void execute(CommentInputData commentInputData) {
         String comment = commentInputData.getComment();
-        commentUserDataAccessInterface.saveComment(comment);
+        postEntity post = commentInputData.getPost();
+        post.getPostComment().add(comment);
         commentOutputBoundary.prepareSuccessView(new CommentOutputData(comment));
+    }
+
+    public void execute(postEntity post){
+        commentOutputBoundary.prepareSuccessView(post);
     }
 }

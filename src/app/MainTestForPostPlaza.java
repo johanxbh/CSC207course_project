@@ -1,8 +1,8 @@
 package app;
 
-import data_access.FilePostAccessObject;
 import data_access.InMemoryDataAccessObject;
 import data_access.postDAO;
+import entities.User;
 import entities.postEntity;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.back.BackController;
@@ -10,18 +10,21 @@ import interface_adapter.cancel.cancelViewModel;
 import interface_adapter.comment.CommentController;
 import interface_adapter.comment.CommentPresenter;
 import interface_adapter.comment.CommentViewModel;
+import interface_adapter.like.LikeController;
+import interface_adapter.like.LikePresenter;
+import interface_adapter.like.LikeViewModel;
 import interface_adapter.list_liked_post.ListLikedPostController;
+import interface_adapter.list_liked_post.ListLikedPostViewModel;
 import interface_adapter.post.postViewModel;
 import interface_adapter.post_plaza.PostPlazaState;
 import interface_adapter.post_plaza.PostPlazaViewModel;
 import use_case.comment.CommentInputBoundary;
 import use_case.comment.CommentInteracter;
 import use_case.comment.CommentOutputBoundary;
+import use_case.like.LikeInteracter;
 import use_case.list_liked_post.ListLikedPostInputBoundary;
 import use_case.list_liked_post.ListLikedPostInteractor;
-import view.PostPlazaView;
-import view.ViewManager;
-import view.postView;
+import view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,14 +77,22 @@ public class MainTestForPostPlaza {
         ListLikedPostController fakecontroller = new ListLikedPostController(fakeinteractor);
         BackController fakebackcontroller = new BackController();
 
-        CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(new CommentViewModel("comment"));
-        CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter, new FilePostAccessObject());
+        CommentOutputBoundary fakecommentpresenter  = new CommentPresenter(viewManagerModel, new CommentViewModel("commentView"));
+        CommentInputBoundary fakecommentInteractor = new CommentInteracter(fakecommentpresenter);
         postViewModel postViewModel = new postViewModel();
         postDAO InMemoryDataAccessObject = new InMemoryDataAccessObject();
 
 
         postView postView = postViewFactory.create(viewManagerModel,InMemoryDataAccessObject,postViewModel, new cancelViewModel());
-        PostPlazaView postPlazaView = new PostPlazaView(postPlazaViewModel, fakebackcontroller, new CommentController(fakecommentInteractor), postView);
+        CommentViewModel commentViewModel = new CommentViewModel("commentView");
+        CommentOutputBoundary commentPresenter = new CommentPresenter(viewManagerModel, commentViewModel);
+        CommentInputBoundary commentInteractore = new CommentInteracter(commentPresenter);
+        CommentController commentController = new CommentController(commentInteractore);
+        CommentView commentView = new CommentView(commentViewModel,commentController);
+        LikeController likeController = new LikeController(new LikeInteracter(new LikePresenter(new LikeViewModel("like"))));
+        ListLikedPostController listLikedPostController = new ListLikedPostController(new ListLikedPostInteractor());
+        ListLikedPostView listLikedPostView = new ListLikedPostView(new ListLikedPostViewModel(),listLikedPostController,fakebackcontroller);
+        PostPlazaView postPlazaView = new PostPlazaView(commentViewModel,postPlazaViewModel, likeController, listLikedPostController, postView ,commentView, listLikedPostView, new User(123,"123"));
 
 
 
