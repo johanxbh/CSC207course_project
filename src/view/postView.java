@@ -1,5 +1,6 @@
 package view;
 
+import app.generatePosts;
 import interface_adapter.cancel.cancelController;
 import interface_adapter.cancel.cancelViewModel;
 import interface_adapter.post.postController;
@@ -34,6 +35,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
     private final cancelController cancelController;
     private JLabel imageLabel = new JLabel();
     private String selectedImagePath;
+    private final JButton generateRandomPost;
 
     public postView(postViewModel postViewModel,cancelViewModel cancelViewModel, postController postController, cancelController cancelController) {
         postTextField.setLineWrap(true);
@@ -54,7 +56,9 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
         post = new JButton(postViewModel.POST_BUTTON_LABEL);
         cancel = new JButton(cancelViewModel.CANCEL_BUTTON_LABEL);
         selectPictures = new JButton(postViewModel.PICTURE_BUTTON_LABEL);
+        generateRandomPost = new JButton(postViewModel.RANDOM_GENERATE_BUTTON_LABEL);
         centerPanel.add(post);
+        centerPanel.add(generateRandomPost);
         centerPanel.add(cancel);
         centerPanel.add(selectPictures);
         LabelTextPanel textInfo = new LabelTextPanel(new JLabel(postViewModel.POST_BUTTON_LABEL), postTextField);
@@ -63,6 +67,26 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
         add(centerPanel, BorderLayout.CENTER);
         imageLabel.setPreferredSize(new Dimension(800, 800));
         centerPanel.add(imageLabel);
+        generateRandomPost.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                if(e.getSource().equals(generateRandomPost)){
+                    generatePosts generator = new generatePosts();
+                    postState currentState = postViewModel.getState();
+                    try {
+                        currentState.setPostInputText(generator.getFakePost());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    postViewModel.setPostState(currentState);
+                    try {
+                        postController.execute(currentState.getPostInputText(), null);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
         selectPictures.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -193,8 +217,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
         }
         else{
             JOptionPane.showMessageDialog(this,"cancel successfully");
-            postTextField.setText("");
-            postPictureField.setText("");
+            SwingUtilities.getWindowAncestor(this).dispose();
         }
 
     }
