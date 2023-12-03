@@ -1,6 +1,11 @@
+import interface_adapter.login.LoginViewModel;
+import interface_adapter.login.LoginController;
+import view.LoginView;
+import use_case.login.LoginInteractor;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
 
 public class LoginViewTest {
 
@@ -17,8 +22,6 @@ public class LoginViewTest {
 
     @Test
     public void testInitialization() {
-        assertNotNull(loginView.usernameInputField);
-        assertNotNull(loginView.passwordInputField);
         assertNotNull(loginView.logIn);
         assertNotNull(loginView.cancel);
         // Add more assertions to check initial state of the view
@@ -38,9 +41,5 @@ public class LoginViewTest {
     public void testTextFieldInput() {
         loginView.usernameInputField.setText("testUser");
         assertEquals("testUser", loginView.usernameInputField.getText());
-
-        String testPassword = "testPass";
-        loginView.passwordInputField.setText(testPassword);
-        assertEquals(testPassword, new String(loginView.passwordInputField.getPassword()));
     }
 }

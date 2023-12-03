@@ -20,6 +20,7 @@ public class PullPresenter implements PullOutputBoundary {
         viewModel.setLatestPosts(outputData.getPosts());
         PostPlazaState state = postPlazaViewModel.getState();
         state.setPostList(outputData.getPosts());
+        state.setNeedUpdate(true);
         postPlazaViewModel.firePropertyChanged();
         viewModel.notifyObservers(); // Notify the view that the data has been updated
     }
