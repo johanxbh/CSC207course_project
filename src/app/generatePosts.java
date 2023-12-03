@@ -8,9 +8,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class generatePosts {
+public class  generatePosts {
 
-    public String getFakePost() throws Exception{
+    public String getFakePost() throws Exception {
 
         String apiUrl = "https://api.chucknorris.io/jokes/random";
 
@@ -35,13 +35,11 @@ public class generatePosts {
             JsonParser jsonParser = new JsonParser();
             JsonObject jsonObject = jsonParser.parse(reader).getAsJsonObject();
 
-            // 获取笑话的值
             String joke = jsonObject.get("value").getAsString();
             connection.disconnect();
             return joke;
         } else {
             connection.disconnect();
-            System.out.println("API请求失败，状态码：" + responseCode);
             return null;
         }
     }
