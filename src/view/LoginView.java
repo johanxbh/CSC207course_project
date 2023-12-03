@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.Random;
 
 public class LoginView extends JPanel implements ActionListener {
-    public static final String viewName = "log in";  // viewName declared as a public static variable
+    public static final String viewName = "log in";
     private final LoginViewModel loginViewModel;
     private final LoginController loginController;
     final JButton logIn;
@@ -20,19 +20,28 @@ public class LoginView extends JPanel implements ActionListener {
         this.loginViewModel = loginViewModel;
         this.loginController = loginController;
 
-        JLabel title = new JLabel("Login Screen");
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JPanel buttons = new JPanel();
+        // Initialize the buttons
         logIn = new JButton(loginViewModel.LOGIN_BUTTON_LABEL);
         cancel = new JButton(loginViewModel.CANCEL_BUTTON_LABEL);
+
+        // Set up the button panel
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new FlowLayout(FlowLayout.CENTER)); // Align the buttons in the center
+        buttons.add(logIn); // Add the login button to the buttons panel
+        buttons.add(cancel); // Add the cancel button to the buttons panel
 
         logIn.addActionListener(this);
         cancel.addActionListener(this);
 
+        // Set the layout for the LoginView panel
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        // Add components to the LoginView panel
+        JLabel title = new JLabel("Login Screen");
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.add(title);
-        this.add(buttons);
+        this.add(Box.createRigidArea(new Dimension(0, 5))); // Add some space between the title and buttons
+        this.add(buttons); // Add the buttons panel to the LoginView panel
     }
 
     @Override

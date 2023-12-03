@@ -4,6 +4,11 @@ import entities.User;
 
 public class ConsoleLoginOutput implements LoginOutputBoundary {
     @Override
+    public void prepareSuccessView(LoginOutputData response) {
+
+    }
+
+    @Override
     public void presentLoginSuccess(User user) {
         System.out.println("Login successful for user: " + user.getName());
     }
