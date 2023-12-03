@@ -1,19 +1,14 @@
-package postTest;
 import data_access.InMemoryDataAccessObject;
 import entities.postEntity;
 import org.junit.Before;
 import org.junit.Test;
-import use_case.post.PostinputData;
-import use_case.post.postInteractor;
-import use_case.post.postOutputBoundary;
-import use_case.post.postOutputData;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class postInteractorTest {
+public class LoginInteractorTest {
     private InMemoryDataAccessObject successDataAccessObj;
 
     @Before
