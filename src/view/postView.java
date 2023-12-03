@@ -34,7 +34,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
     private final JButton selectPictures;
     private final cancelController cancelController;
     private JLabel imageLabel = new JLabel();
-    private String selectedImagePath;
+    private String selectedImagePath = "";
     private final JButton generateRandomPost;
 
     public postView(postViewModel postViewModel,cancelViewModel cancelViewModel, postController postController, cancelController cancelController) {
@@ -191,7 +191,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
                 JOptionPane.showMessageDialog(this, state.getPostError());
             }
             else {
-                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo() + ";" + state.getPostPictureText());
+                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo());
                 SwingUtilities.getWindowAncestor(this).dispose();
                 SwingUtilities.invokeLater(() -> {
                     JFrame frame = new JFrame("Image Display");
