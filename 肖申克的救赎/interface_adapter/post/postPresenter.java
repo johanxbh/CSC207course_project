@@ -18,6 +18,7 @@ public class postPresenter implements postOutputBoundary{
         postViewModel.getState().setPostText(data.getPost().getPosttext());
         postViewModel.getState().setPostPictureText(data.getPost().getPostPicture());
         postViewModel.getState().setPostSuccess("true");
+        postViewModel.firePropertyChanged();
         System.out.println("from presenter" + postViewModel.getState().getPostPictureText());
         postViewModel.firePropertyChanged();
         viewManagerModel.setActiveView(postViewModel.getViewName());

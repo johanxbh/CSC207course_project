@@ -46,7 +46,8 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        JFrame application = new JFrame("App Example");
+
+        JFrame application = new JFrame("anonymous post");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         CardLayout cardLayout = new CardLayout();
@@ -54,17 +55,18 @@ public class Main {
         application.add(views);
         ViewManagerModel viewManagerModel = new ViewManagerModel();
         new ViewManager(views, cardLayout, viewManagerModel);
+
+        PostPlazaViewModel postPlazaViewModel = new PostPlazaViewModel();
         LoginUserDataAccessInterface userDataAccess = new MockLoginUserDataAccess();
         LoginViewModel loginViewModel = new LoginViewModel();
-        LoginOutputBoundary loginOutput = new LoginPresenter(viewManagerModel, loginViewModel);
+        LoginOutputBoundary loginOutput = new LoginPresenter(viewManagerModel, loginViewModel, postPlazaViewModel);
         postViewModel postViewModel = new postViewModel();
-        postDAO postDataAccessObject = new postDataAccessObject("sl.BrCJJYjXBbCP4Ky8bj0AxEw_jIrRvkUQo-yIHsgZLnVVoytJ1wqywBIbjS0kMT8Yccxyo2HH-2Rr0wKtRJVjCniPvnDwVKautCzI7VyZC_p_aa3Ci9d_WuAo8VLhoi1aOwuVDH14jPykYO9X-D2eUEE");
+        postDAO postDataAccessObject = new postDataAccessObject("sl.BrG3fUQ7YFoo3UzmrfNDqVqH-6J4fRSrRtLnmPv28gYEi9PqJdt-FkzGkuwvqz-Hh7VTu_E0ddbeUvR8-FKAUONMLdTfvc9Kl8JMsfC9YMIG5pjPjdHbB3rebUuPLOohJNzGmHDSoAZIcBClq4Y83Ho");
 
         LoginInputBoundary loginInputBoundary = new LoginInteractor(postDataAccessObject, loginOutput);
         LoginController loginController = new LoginController(loginInputBoundary);
         cancelViewModel cancelViewModel = new cancelViewModel();
         postView postView = postViewFactory.create(viewManagerModel,postDataAccessObject,postViewModel, cancelViewModel);
-        PostPlazaViewModel postPlazaViewModel = new PostPlazaViewModel();
         BackController backController = new BackController();
         CommentViewModel commentViewModel = new CommentViewModel("commentView");
         CommentOutputBoundary commentPresenter = new CommentPresenter(viewManagerModel, commentViewModel);
@@ -86,11 +88,11 @@ public class Main {
         PullController pullController = new PullController(pullInteractor);
 
         ListLikedPostView listLikedPostView = new ListLikedPostView(listLikedPostViewModel, listLikedPostController);
-        PostPlazaView postPlazaView = new PostPlazaView(commentViewModel, postPlazaViewModel,viewManagerModel,listLikedPostViewModel, likeController, listLikedPostController, pullController, postView, commentView, listLikedPostView, new User(123));
+        PostPlazaView postPlazaView = new PostPlazaView(commentViewModel, postPlazaViewModel,viewManagerModel,listLikedPostViewModel,postViewModel, likeController, listLikedPostController, pullController, postView, commentView, listLikedPostView, new User(123));
         views.add(postPlazaView, postPlazaView.viewName);
-        LoginView loginView = new LoginView(loginViewModel, loginController, viewManagerModel);
+        LoginView loginView = new LoginView(loginViewModel, loginController, viewManagerModel, postPlazaView);
         views.add(loginView, loginView.viewName);
-        viewManagerModel.setActiveView(postPlazaView.viewName);
+        viewManagerModel.setActiveView(loginView.viewName);
         viewManagerModel.firePropertyChanged();
         application.pack();
         application.setVisible(true);
