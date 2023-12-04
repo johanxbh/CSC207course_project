@@ -59,7 +59,7 @@ public class Main {
         LoginViewModel loginViewModel = new LoginViewModel();
         LoginOutputBoundary loginOutput = new LoginPresenter(viewManagerModel, loginViewModel, postPlazaViewModel);
         postViewModel postViewModel = new postViewModel();
-        postDAO postDataAccessObject = new postDataAccessObject("sl.BrGMHU-XWrsrGFN_3brPSlx37ds4pf-kase166IKQp_oBwZJCjmLRhvAMbSbKF_kTmGlu59LbcM033ap2m750uzswM5hg2Ys02RFrZl1DkDxbQ83sncGYlFi1YQSvoXXIGOqwY0M_YQZLX1UUqK-Ta8");
+        postDAO postDataAccessObject = new postDataAccessObject("sl.BrERzVI7FARQyJirL85y2AcHLaIksbP-Xa8fYJ06UmNQ5QWADI_l4xbNqa8Mh3Op3MV5HIV58B2IIvjzjEB3ofnsgkjZSmYy_D4VYD-SAz86EkmI6sqxsfY5PSPEXQcIzV2xU1nC9qsyXjItl0rh7Gc");
 
         LoginInputBoundary loginInputBoundary = new LoginInteractor(postDataAccessObject, loginOutput);
         LoginController loginController = new LoginController(loginInputBoundary);
