@@ -14,6 +14,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="CSC207course_project_FINAL" target="20" />
       <module name="CSC207course_project_final1" target="20" />
       <module name="CSC207DAO" target="20" />
     </bytecodeTargetLevel>

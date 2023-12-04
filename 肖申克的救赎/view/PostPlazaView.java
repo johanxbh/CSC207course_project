@@ -9,6 +9,7 @@ import interface_adapter.list_liked_post.ListLikedPostController;
 import interface_adapter.list_liked_post.ListLikedPostState;
 import interface_adapter.list_liked_post.ListLikedPostViewModel;
 import interface_adapter.post.postState;
+import interface_adapter.post.postViewModel;
 import interface_adapter.post_plaza.PostPlazaState;
 import interface_adapter.post_plaza.PostPlazaViewModel;
 import interface_adapter.pull.PullController;
@@ -38,6 +39,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
     private final CommentViewModel commentViewModel;
     private final ViewManagerModel viewManagerModel;
     private final ListLikedPostViewModel listLikedPostViewModel;
+    private final postViewModel postViewModel;
     private final LikeController likeController;
     private final ListLikedPostController listLikedPostController;
     private final PullController pullController;
@@ -55,6 +57,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
                          PostPlazaViewModel postPlazaViewModel,
                          ViewManagerModel viewManagerModel,
                          ListLikedPostViewModel listLikedPostViewModel,
+                         postViewModel postViewModel,
                          LikeController likeController,
                          ListLikedPostController listLikedPostController,
                          PullController pullController,
@@ -65,6 +68,9 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         this.commentViewModel = commentViewModel;
         commentViewModel.addPropertyChangeListener(this);
         this.postPlazaViewModel = postPlazaViewModel;
+        this.postViewModel = postViewModel;
+        postViewModel.addPropertyChangeListener(this);
+
         this.viewManagerModel = viewManagerModel;
         this.listLikedPostViewModel = listLikedPostViewModel;
         listLikedPostViewModel.addPropertyChangeListener(this);
@@ -104,7 +110,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
 
         }
         JScrollPane postsScroll = new JScrollPane(postsPanel);
-        postsScroll.getViewport().setPreferredSize(new Dimension(700, 500));
+        postsScroll.getViewport().setPreferredSize(new Dimension(700, 700));
         jPanel.add(postsScroll);
         System.out.println("add the postScroll");
         JPanel buttonPanel = this.createButtonsForPlaza(new Dimension(200, 500));
@@ -125,6 +131,7 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         System.out.println("evt"+ evt.getNewValue());
         if (evt.getNewValue() instanceof postState) {
             openedJFrame.dispose();
+            haveOpenedJFrame = false;
         }
         else if (evt.getNewValue() instanceof PostPlazaState){
             PostPlazaState postPlazaState = (PostPlazaState) evt.getNewValue();
@@ -414,7 +421,10 @@ public class PostPlazaView extends JPanel implements ActionListener, PropertyCha
         Image image = imageIcon.getImage();
         int imageWidth = image.getWidth(null);
         int imageHeight = image.getHeight(null);
-        double ratio = Math.min(1 / Math.ceil(imageWidth / 500), 1 / Math.ceil(imageHeight / 500));
+        double ratio = Math.min(1 / (Math.ceil(imageWidth / 500)), 1 / (Math.ceil(imageHeight / 500)));
+        if (Math.max(imageHeight, imageWidth) > 700){
+        ratio = Math.min(1 / (2 * Math.ceil(imageWidth / 500)), 1 / (2 * Math.ceil(imageHeight / 500)));}
+
         double newWidth = imageWidth * ratio;
         double newHeight = imageHeight * ratio;
         Image resizedImage = image.getScaledInstance((int) newWidth, (int) newHeight, Image.SCALE_SMOOTH);

@@ -18,11 +18,13 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
     private final LoginController loginController;
     private final JButton logIn;
     private final ViewManagerModel viewManagerModel;
+    private final PostPlazaView postPlazaView;
 
-    public LoginView(LoginViewModel loginViewModel, LoginController loginController, ViewManagerModel viewManagerModel) {
+    public LoginView(LoginViewModel loginViewModel, LoginController loginController, ViewManagerModel viewManagerModel, PostPlazaView postPlazaView) {
         this.loginViewModel = loginViewModel;
         this.loginController = loginController;
         this.viewManagerModel = viewManagerModel;
+        this.postPlazaView = postPlazaView;
 
         // Initialize the buttons
         logIn = new JButton(loginViewModel.LOGIN_BUTTON_LABEL);
@@ -51,8 +53,8 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("login state")){
-            viewManagerModel.setActiveView("post plaza");
+        if (evt.getSource().equals("login state")){
+            viewManagerModel.setActiveView(postPlazaView.viewName);
             viewManagerModel.firePropertyChanged();
         }
     }

@@ -191,9 +191,12 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
                 JOptionPane.showMessageDialog(this, state.getPostError());
             }
             else {
-                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo() + ";" + state.getPostPictureText());
+                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo());
                 SwingUtilities.getWindowAncestor(this).dispose();
-
+                postTextField.setText("");
+                state.setPostText("");
+                state.setPostPictureText("");
+                cleanPicture();
             }
         }
         else{
@@ -210,9 +213,17 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
     private void displayImage(String imagePath) {
         try {
             BufferedImage image = javax.imageio.ImageIO.read(new File(imagePath));
-            ImageIcon imageIcon = new ImageIcon(image);
+            int imageWidth = image.getWidth();
+            int imageHeight = image.getHeight();
+            Double ratio = Math.min(1/(2*Math.ceil(imageWidth/600)), 1/(2*Math.ceil(imageHeight/600)));
+            Image newImage = image.getScaledInstance((int) (imageWidth * ratio), (int) (imageHeight * ratio), Image.SCALE_SMOOTH);
+            ImageIcon imageIcon = new ImageIcon(newImage);
             imageLabel.setIcon(imageIcon);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-}}
+}
+    private void cleanPicture(){
+        imageLabel.setIcon(null);
+    }
+}
