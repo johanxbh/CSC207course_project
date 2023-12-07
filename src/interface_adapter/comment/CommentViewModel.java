@@ -15,7 +15,7 @@ public class CommentViewModel extends ViewModel {
     }
 
     @Override
-    public void firePropertyChanged() {support.firePropertyChange("state", null, this.state);
+    public void firePropertyChanged() {support.firePropertyChange("comment state", null, this.state);
 
     }
 

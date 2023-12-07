@@ -2,12 +2,16 @@ package data_access;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import entities.User;
 import entities.postEntity;
 import okhttp3.*;
 import okio.BufferedSink;
 import okio.Okio;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +25,7 @@ public class postDataAccessObject implements postDAO {
     private String POST_DIRECTORY = "/POST";
     private String DOWNLOAD_DIRECTORY_NAME = "Download";
     private String UPLOAD_DIRECTORY_NAME = "Upload";
+    private HashMap<Integer, User> userHashMap = new HashMap<Integer, User>();
 
     public postDataAccessObject(String api) throws IOException {
         File outputDirectory = new File(OUT_PUT_DIRECTORY_NAME);
@@ -141,13 +146,34 @@ public class postDataAccessObject implements postDAO {
     }
 
     @Override
-    public List<postEntity> getLatestPosts() {
-        return null;
+    public List<postEntity> getLatestPosts() throws IOException {
+        downloadFile("/" + LATEST_POST_NUM,LATEST_POST_NUM);
+        String num = readContent(LATEST_POST_NUM);
+        Integer newstNum = Integer.parseInt(num);
+        System.out.println(newstNum);
+        ArrayList<postEntity> latestPosts = new ArrayList<postEntity>();
+        if (newstNum <= 5 ){
+            System.out.println("starts to add");
+            for(int i = 2; i <= newstNum; i++){
+                latestPosts.add(getPost(i));
+                System.out.println(i);
+            }
+        } else {
+            for (int i = newstNum -4; i <= newstNum; i++){
+                latestPosts.add(getPost(i));
+            }
+        }
+        return latestPosts;
     }
 
     @Override
     public postEntity getlatestPost(List<postEntity> posts) {
         return null;
+    }
+
+    @Override
+    public void saveUser(int username) {
+        userHashMap.put(username, new User(username));
     }
 
     public boolean checkFileExist(String fileName) throws IOException {
@@ -332,14 +358,19 @@ public class postDataAccessObject implements postDAO {
             file.delete();
         }
     }
-    private boolean checkLocalFileExist(String filePath){
-        File file = new File(filePath);
-        if (file.exists()){
-            return true;
+    private boolean checkLocalFileExist(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                return true;
+            }
+            return false;
+        }catch(Exception e){
+            return false;
         }
-        return false;
     }
     public String checkPictureType(String picturepath){
+        try{
         String input = "This is a string with .ABC and .DEFGH, and .IJKL";
 
         Pattern pattern = Pattern.compile("\\.(jpg|jpeg|png|gif|bmp)$", Pattern.CASE_INSENSITIVE); // Pattern for dot followed by letters
@@ -355,6 +386,8 @@ public class postDataAccessObject implements postDAO {
         if (!lastXXX.isEmpty()) {
             return lastXXX;
         } else {
+            return null;
+        }} catch (Exception e){
             return null;
         }
     }

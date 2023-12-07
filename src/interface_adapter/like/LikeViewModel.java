@@ -17,7 +17,7 @@ public class LikeViewModel extends ViewModel {
     }
 
     @Override
-    public void firePropertyChanged() {support.firePropertyChange("state", null, this.state);
+    public void firePropertyChanged() {support.firePropertyChange("like state", null, this.state);
 
     }
 

@@ -19,7 +19,8 @@ public class CommentPresenter implements CommentOutputBoundary {
     @Override
     public void prepareSuccessView(CommentOutputData commentOutputData) {
         commentViewModel.getState().setComment(commentOutputData.getComment());
-        viewManagerModel.setActiveView("plazaView");
+        commentViewModel.firePropertyChanged();
+        viewManagerModel.setActiveView(commentViewModel.getViewName());
         viewManagerModel.firePropertyChanged();
     }
 

@@ -1,5 +1,6 @@
 package view;
 
+import app.generatePosts;
 import interface_adapter.cancel.cancelController;
 import interface_adapter.cancel.cancelViewModel;
 import interface_adapter.post.postController;
@@ -33,6 +34,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
     private final JButton selectPictures;
     private final cancelController cancelController;
     private JLabel imageLabel = new JLabel();
+    private final JButton randomPost;
     private String selectedImagePath;
 
     public postView(postViewModel postViewModel,cancelViewModel cancelViewModel, postController postController, cancelController cancelController) {
@@ -54,7 +56,9 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
         post = new JButton(postViewModel.POST_BUTTON_LABEL);
         cancel = new JButton(cancelViewModel.CANCEL_BUTTON_LABEL);
         selectPictures = new JButton(postViewModel.PICTURE_BUTTON_LABEL);
+        randomPost = new JButton(postViewModel.GENERATE_POST_LABEL);
         centerPanel.add(post);
+        centerPanel.add(randomPost);
         centerPanel.add(cancel);
         centerPanel.add(selectPictures);
         LabelTextPanel textInfo = new LabelTextPanel(new JLabel(postViewModel.POST_BUTTON_LABEL), postTextField);
@@ -63,6 +67,26 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
         add(centerPanel, BorderLayout.CENTER);
         imageLabel.setPreferredSize(new Dimension(800, 800));
         centerPanel.add(imageLabel);
+        randomPost.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                if(e.getSource().equals(randomPost)){
+                    generatePosts generator = new generatePosts();
+                    postState currentState = postViewModel.getState();
+                    try {
+                        currentState.setPostInputText(generator.getFakePost());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    postViewModel.setPostState(currentState);
+                    try {
+                        postController.execute(currentState.getPostInputText(),null);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
         selectPictures.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,7 +94,7 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
                         @Override
-                        public boolean accept(java.io.File f) {
+                        public boolean accept(File f) {
                             return f.getName().toLowerCase().endsWith(".png")
                                     || f.getName().toLowerCase().endsWith(".jpg")
                                     || f.getName().toLowerCase().endsWith(".jpeg")
@@ -167,34 +191,18 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
                 JOptionPane.showMessageDialog(this, state.getPostError());
             }
             else {
-                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo() + ";" + state.getPostPictureText());
+                JOptionPane.showMessageDialog(this, "successfully posted:" + state.getPostInfo());
                 SwingUtilities.getWindowAncestor(this).dispose();
-                SwingUtilities.invokeLater(() -> {
-                    JFrame frame = new JFrame("Image Display");
-                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    JLabel imageLabel = new JLabel();
-                    ImageIcon imageIcon = null;
-                    try {
-                        BufferedImage image = javax.imageio.ImageIO.read(new File(state.getPostPictureText()));
-                        imageIcon = new ImageIcon(image);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    imageLabel.setIcon(imageIcon);
-
-                    frame.getContentPane().add(imageLabel);
-
-                    frame.setSize(1200, 1200);
-                    frame.setLocationRelativeTo(null);
-                    frame.setVisible(true);
-                });
-
+                postTextField.setText("");
+                state.setPostText("");
+                state.setPostPictureText("");
+                cleanPicture();
             }
         }
         else{
             JOptionPane.showMessageDialog(this,"cancel successfully");
-            postTextField.setText("");
-            postPictureField.setText("");
+            SwingUtilities.getWindowAncestor(this).dispose();
+
         }
 
     }
@@ -205,9 +213,17 @@ public class postView extends JPanel implements PropertyChangeListener, ActionLi
     private void displayImage(String imagePath) {
         try {
             BufferedImage image = javax.imageio.ImageIO.read(new File(imagePath));
-            ImageIcon imageIcon = new ImageIcon(image);
+            int imageWidth = image.getWidth();
+            int imageHeight = image.getHeight();
+            Double ratio = Math.min(1/(2*Math.ceil(imageWidth/600)), 1/(2*Math.ceil(imageHeight/600)));
+            Image newImage = image.getScaledInstance((int) (imageWidth * ratio), (int) (imageHeight * ratio), Image.SCALE_SMOOTH);
+            ImageIcon imageIcon = new ImageIcon(newImage);
             imageLabel.setIcon(imageIcon);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-}}
+}
+    private void cleanPicture(){
+        imageLabel.setIcon(null);
+    }
+}

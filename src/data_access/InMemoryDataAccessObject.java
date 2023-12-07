@@ -7,8 +7,10 @@ import java.util.List;
 
 public class InMemoryDataAccessObject implements postDAO{
     private ArrayList<postEntity> posts;
+    private ArrayList<Integer> users;
     public InMemoryDataAccessObject(){
         posts = new ArrayList<postEntity>();
+        users = new ArrayList<Integer>();
     }
     @Override
     public postEntity getMostRecentPost() {
@@ -39,7 +41,7 @@ public class InMemoryDataAccessObject implements postDAO{
 
     @Override
     public postEntity getPost(Integer id) {
-        return null;
+        return posts.get(0);
     }
 
     @Override
@@ -51,6 +53,11 @@ public class InMemoryDataAccessObject implements postDAO{
     public postEntity getlatestPost(List<postEntity> posts) {
         Object postEntity;
         return null;
+    }
+
+    @Override
+    public void saveUser(int username) {
+        users.add(username);
     }
 
 }

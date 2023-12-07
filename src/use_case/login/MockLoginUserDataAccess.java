@@ -8,7 +8,7 @@ public class MockLoginUserDataAccess implements LoginUserDataAccessInterface {
         // In a real scenario, this method would query a database or another data source.
         // Here's a mock implementation for demonstration purposes.
         if (userId == 12345) {  // Example check
-            return new User(userId, "Mock User");
+            return new User(userId);
         }
         return null;
     }

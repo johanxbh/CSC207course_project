@@ -11,7 +11,6 @@ public class postController {
         this.postInteractor = postInteractor;
     }
     public void execute(String textInformation, String postPictre) throws IOException {
-        System.out.println("from input data" + postPictre);
         postInteractor.execute(new PostinputData(textInformation, postPictre));
 
     }

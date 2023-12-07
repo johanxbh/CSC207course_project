@@ -35,7 +35,6 @@ public class generatePosts {
             JsonParser jsonParser = new JsonParser();
             JsonObject jsonObject = jsonParser.parse(reader).getAsJsonObject();
 
-            // 获取笑话的值
             String joke = jsonObject.get("value").getAsString();
             connection.disconnect();
             return joke;

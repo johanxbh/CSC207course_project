@@ -6,38 +6,36 @@ import interface_adapter.logged_in.LoggedInViewModel;
 
 import interface_adapter.ViewManagerModel;
 
+import interface_adapter.post_plaza.PostPlazaViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
+import view.PostPlazaView;
 
 public class LoginPresenter implements LoginOutputBoundary {
 
     private final LoginViewModel loginViewModel;
-    private final LoggedInViewModel loggedInViewModel;
+    private final PostPlazaViewModel postPlazaViewModel;
     private ViewManagerModel viewManagerModel;
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
-                          LoggedInViewModel loggedInViewModel,
-                          LoginViewModel loginViewModel) {
+                          LoginViewModel loginViewModel, PostPlazaViewModel postPlazaViewModel) {
         this.viewManagerModel = viewManagerModel;
-        this.loggedInViewModel = loggedInViewModel;
         this.loginViewModel = loginViewModel;
+        this.postPlazaViewModel = postPlazaViewModel;
     }
 
     @Override
     public void prepareSuccessView(LoginOutputData response) {
         // On success, switch to the logged in view.
-
-        LoggedInState loggedInState = loggedInViewModel.getState();
-        this.loggedInViewModel.setState(loggedInState);
-        this.loggedInViewModel.firePropertyChanged();
-
-        this.viewManagerModel.setActiveView(loggedInViewModel.getViewName());
+        LoginState logginState = loginViewModel.getState();
+        this.loginViewModel.setState(logginState);
+        this.loginViewModel.firePropertyChanged();
+        this.viewManagerModel.setActiveView(postPlazaViewModel.getViewName());
         this.viewManagerModel.firePropertyChanged();
     }
 
     @Override
     public void presentLoginSuccess(User user) {
-
     }
 
     @Override

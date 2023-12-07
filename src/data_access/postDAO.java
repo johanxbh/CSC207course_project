@@ -11,7 +11,7 @@ public interface postDAO {
     public void cleanAllPost();
     public postEntity getMostPopularPost();
     public postEntity getPost(Integer postid) throws IOException;
-    public List<postEntity> getLatestPosts();
-
+    public List<postEntity> getLatestPosts() throws IOException;
     postEntity getlatestPost(List<postEntity> posts);
+    void saveUser(int username);
 }

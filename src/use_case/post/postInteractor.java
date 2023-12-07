@@ -27,7 +27,7 @@ public class postInteractor implements postInputBoundary{
         }
     }
 
-    public void refreshPosts() {
+    public void refreshPosts() throws IOException {
         List<postEntity> latestPosts = dataAccessObj.getLatestPosts();
         // Here you can format or process the posts as needed before sending to the presenter
         postPresenter.prepareRefreshView(latestPosts);

@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class User {
-    private final String id;
-    private HashMap<Integer, Integer> likedpost;
+    private final int id;
+    private HashMap<Integer, Integer> likedpost = new HashMap<Integer, Integer>();
 
-    public User(int userId, String id) {
-        this.id = id;
+    public User(int userId) {
+        this.id = userId;
     }
     public void addLikedPost(postEntity newLikedPost){
         Integer postid = newLikedPost.getId();
@@ -24,7 +24,7 @@ public class User {
         return new ArrayList<Integer>(keys);
     }
 
-    public String getName() {
+    public int getName() {
         return id;
     }
 }

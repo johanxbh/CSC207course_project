@@ -16,7 +16,4 @@ public class CommentController {
         commentInteracter.execute(commentInputData);
     }
 
-    public void execute(postEntity post){
-        commentInteracter.execute(post);
-    }
 }

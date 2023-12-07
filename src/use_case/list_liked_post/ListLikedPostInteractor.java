@@ -9,8 +9,17 @@ import java.util.ArrayList;
 public class ListLikedPostInteractor implements ListLikedPostInputBoundary{
     private postDAO postdao;
     private ListLikedPostOutputBoundary listLikedPostPresenter;
+    public ListLikedPostInteractor(postDAO postdao, ListLikedPostOutputBoundary listLikedPostPresenter){
+        this.postdao = postdao;
+        this.listLikedPostPresenter = listLikedPostPresenter;
+    }
     @Override
     public void execute(ListLikedPostInputData inputData) throws IOException {
+        System.out.println(inputData.getLikedPostList().size());
+        if (inputData.getLikedPostList() == null){
+            listLikedPostPresenter.prepareFailView("No liked post");
+        }
+        else {
         ArrayList<Integer> likedlist = inputData.getLikedPostList();
         if (likedlist.size() == 0){
             listLikedPostPresenter.prepareFailView("No liked post");
@@ -23,5 +32,5 @@ public class ListLikedPostInteractor implements ListLikedPostInputBoundary{
         ListLikedPostOutputData listLikedPostOutputData = new ListLikedPostOutputData(likedPost);
         listLikedPostPresenter.prepareSuccessView(listLikedPostOutputData);
         }
-    }
+    }}
 }

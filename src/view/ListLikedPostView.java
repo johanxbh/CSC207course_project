@@ -3,6 +3,7 @@ package view;
 import entities.postEntity;
 import interface_adapter.back.BackController;
 import interface_adapter.list_liked_post.ListLikedPostController;
+import interface_adapter.list_liked_post.ListLikedPostState;
 import interface_adapter.list_liked_post.ListLikedPostViewModel;
 
 import javax.swing.*;
@@ -17,24 +18,34 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
     public final String viewName = "list liked post";
     private final ListLikedPostViewModel listLikedPostViewModel;
     private final ListLikedPostController listLikedPostController;
-    private final BackController backController;
-    final JButton back;
     private Dimension size;
 
-    public ListLikedPostView(ListLikedPostViewModel listLikedPostViewModel, ListLikedPostController listLikedPostController, BackController backController) {
+    public ListLikedPostView(ListLikedPostViewModel listLikedPostViewModel, ListLikedPostController listLikedPostController) {
         this.listLikedPostViewModel = listLikedPostViewModel;
         this.listLikedPostController = listLikedPostController;
-        this.backController = backController;
         this.listLikedPostViewModel.addPropertyChangeListener(this);
         JLabel title = new JLabel("Liked Post");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.add(title);
+        JScrollPane newScrollPane = this.createPanel();
+
+
+
+        this.add(newScrollPane);
+
+    }
+    private JScrollPane createPanel(){
+        if (this.listLikedPostViewModel.getState().getListOfLikedPostArray() == null){
+            return null;
+        }
+        System.out.println("start to recreate...");
         ArrayList<postEntity> likedPost = this.listLikedPostViewModel.getState().getListOfLikedPostArray();
-
-
         JPanel postsPanel = new JPanel();
         postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
         for (postEntity post : likedPost) {
+
+            JPanel onePiture = this.createPostPicturePanel(post);
+            if (!(onePiture == null)){postsPanel.add(onePiture);}
             JPanel onePost = this.createPostPanel(post);
             postsPanel.add(onePost);
             JPanel oneCommentPlaza = this.createPostCommentPanel(post);
@@ -43,19 +54,8 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
         }
         JScrollPane postsScroll = new JScrollPane(postsPanel);
         postsScroll.getViewport().setPreferredSize(new Dimension(600, 500));
-        this.add(postsScroll);
-        back = new JButton(this.listLikedPostViewModel.BACK_LABEL);
-        back.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        if (evt.getSource().equals(back)) {
-                            backController.execute();
-                        }
-                    }
-                }
-        );
-        this.add(back);
+        System.out.println("recreate over");
+        return postsScroll;
 
     }
 
@@ -66,7 +66,12 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-
+        if (evt.getNewValue() instanceof ListLikedPostState){
+            this.removeAll();
+            this.add(this.createPanel());
+            revalidate();
+            repaint();
+        }
     }
 
     private JPanel createPostPanel(postEntity post) {
@@ -79,7 +84,7 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
         }
         int postPanelWidth = 500; // Set your desired width
         JPanel postPanel = new JPanel();
-        postPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        postPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
 //
         postPanel.setPreferredSize(new Dimension(postPanelWidth, postPanelHeight));
@@ -106,7 +111,7 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
             totalWords += i.length();
         }
         JPanel commentPanel = new JPanel();
-        commentPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        commentPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         int panelWidth = 500;
         int panelHeight;
         if (totalWords > 100 ){
@@ -129,5 +134,28 @@ public class ListLikedPostView extends JPanel implements ActionListener, Propert
         JButton comment = new JButton("Comment");
         commentPanel.add(comment);
         return commentPanel;
+    }
+
+    private JPanel createPostPicturePanel(postEntity post){
+        if (post.getPostPicture() == null){
+            return null;
+        }
+        JPanel newPiture = new JPanel();
+        newPiture.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        JLabel newJLabel = new JLabel();
+        String picturePath = post.getPostPicture();
+        ImageIcon imageIcon = new ImageIcon(picturePath);
+        Image image = imageIcon.getImage();
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+        double ratio = Math.min(1 /Math.ceil(imageWidth / 500) , 1 / Math.ceil(imageHeight / 500));
+        double newWidth = imageWidth * ratio;
+        double newHeight = imageHeight * ratio;
+        Image resizedImage = image.getScaledInstance((int) newWidth, (int) newHeight, Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(resizedImage);
+        newJLabel.setIcon(imageIcon);
+        newPiture.add(newJLabel);
+        return newPiture;
+
     }
 }
